@@ -1,0 +1,12 @@
+C:\Users\veryw\source\repos\Minibank\Minibank.Core\bin\Debug\net5.0\Minibank.Core.deps.json
+C:\Users\veryw\source\repos\Minibank\Minibank.Core\bin\Debug\net5.0\Minibank.Core.dll
+C:\Users\veryw\source\repos\Minibank\Minibank.Core\bin\Debug\net5.0\Minibank.Core.pdb
+C:\Users\veryw\source\repos\Minibank\Minibank.Core\obj\Debug\net5.0\Minibank.Core.csproj.AssemblyReference.cache
+C:\Users\veryw\source\repos\Minibank\Minibank.Core\obj\Debug\net5.0\Minibank.Core.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\veryw\source\repos\Minibank\Minibank.Core\obj\Debug\net5.0\Minibank.Core.AssemblyInfoInputs.cache
+C:\Users\veryw\source\repos\Minibank\Minibank.Core\obj\Debug\net5.0\Minibank.Core.AssemblyInfo.cs
+C:\Users\veryw\source\repos\Minibank\Minibank.Core\obj\Debug\net5.0\Minibank.Core.csproj.CoreCompileInputs.cache
+C:\Users\veryw\source\repos\Minibank\Minibank.Core\obj\Debug\net5.0\Minibank.Core.dll
+C:\Users\veryw\source\repos\Minibank\Minibank.Core\obj\Debug\net5.0\refint\Minibank.Core.dll
+C:\Users\veryw\source\repos\Minibank\Minibank.Core\obj\Debug\net5.0\Minibank.Core.pdb
+C:\Users\veryw\source\repos\Minibank\Minibank.Core\obj\Debug\net5.0\ref\Minibank.Core.dll
