@@ -22,7 +22,7 @@ namespace Minibank.Web.Middlewares.ExceptionMiddlewares
             }
             catch (UserFriendlyException friendlyException)
             {
-                context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+                context.Response.StatusCode = StatusCodes.Status400BadRequest;
                 await context.Response.WriteAsJsonAsync(friendlyException.Message);
             }
         }

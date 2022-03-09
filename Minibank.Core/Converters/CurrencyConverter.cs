@@ -11,14 +11,15 @@ namespace Minibank.Core.Converters
 
         public long Convert(int sumConvert, CodeCurrency targetCodeCurrency)
         {
+            if (sumConvert < 0) 
+                throw new UserFriendlyException("Сумма первода не может быть отрицательной!");
+            
             long resultConversion;
             checked
             {
                 resultConversion = (long)sumConvert * _currencyRateProvider.GetCurrencyRate(targetCodeCurrency);
             }
-
-            if (resultConversion < 0) 
-                throw new UserFriendlyException("В результате конвертации получено отрицательное число.");
+            
             return resultConversion;
         }
     }
