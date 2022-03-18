@@ -1,8 +1,17 @@
 {
   "version": 2,
-  "dgSpecHash": "ZzxXKzmEZ+bJNcgPt/C47HPpQx4Cb0ecBaU55P7aQGdUakjavNT50QyCypuzjeidynXOvWJl9/GI90u3qygGpA==",
+  "dgSpecHash": "CopLhFkUO/r6Abyv59LCv0WLTDjAAymokzm19tSgDnIh0XswyhiCUAcIKbF7x6246W+gH4qbzcIPaPmjmvAsBQ==",
   "success": true,
   "projectFilePath": "C:\\Users\\veryw\\RiderProjects\\Minibank\\Minibank.Data\\Minibank.Data.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\veryw\\.nuget\\packages\\microsoft.extensions.configuration.abstractions\\5.0.0\\microsoft.extensions.configuration.abstractions.5.0.0.nupkg.sha512",
+    "C:\\Users\\veryw\\.nuget\\packages\\microsoft.extensions.dependencyinjection\\5.0.0\\microsoft.extensions.dependencyinjection.5.0.0.nupkg.sha512",
+    "C:\\Users\\veryw\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\5.0.0\\microsoft.extensions.dependencyinjection.abstractions.5.0.0.nupkg.sha512",
+    "C:\\Users\\veryw\\.nuget\\packages\\microsoft.extensions.http\\5.0.0\\microsoft.extensions.http.5.0.0.nupkg.sha512",
+    "C:\\Users\\veryw\\.nuget\\packages\\microsoft.extensions.logging\\5.0.0\\microsoft.extensions.logging.5.0.0.nupkg.sha512",
+    "C:\\Users\\veryw\\.nuget\\packages\\microsoft.extensions.logging.abstractions\\5.0.0\\microsoft.extensions.logging.abstractions.5.0.0.nupkg.sha512",
+    "C:\\Users\\veryw\\.nuget\\packages\\microsoft.extensions.options\\5.0.0\\microsoft.extensions.options.5.0.0.nupkg.sha512",
+    "C:\\Users\\veryw\\.nuget\\packages\\microsoft.extensions.primitives\\5.0.0\\microsoft.extensions.primitives.5.0.0.nupkg.sha512"
+  ],
   "logs": []
 }

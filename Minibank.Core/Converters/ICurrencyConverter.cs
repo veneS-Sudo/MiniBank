@@ -2,6 +2,6 @@
 {
     public interface ICurrencyConverter
     {
-        long Convert(int sumConvert, CodeCurrency targetCodeCurrency);
+        double Convert(double amount, Currency fromCurrency, Currency toCurrency);
     }
 }

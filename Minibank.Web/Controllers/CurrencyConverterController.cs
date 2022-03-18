@@ -16,13 +16,13 @@ namespace Minibank.Web.Controllers
         }
 
         [HttpGet]
-        public long Get(int amount, string targetCurrency)
+        public double Get(int amount, string fromCurrency, string toCurrency)
         {
-            if (!Enum.TryParse<CodeCurrency>(targetCurrency, true, out var codeCurrency) ||
-                !Enum.IsDefined(codeCurrency))
-                codeCurrency = CodeCurrency.Random;
-
-            return _currencyConverter.Convert(amount, codeCurrency);
+            return Math.Round( 
+                _currencyConverter.Convert(amount,
+                    Enum.Parse<Currency>(fromCurrency),
+                    Enum.Parse<Currency>(toCurrency, true)),
+                2);
         }
     }
 }

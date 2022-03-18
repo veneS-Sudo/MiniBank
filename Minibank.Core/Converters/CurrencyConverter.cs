@@ -1,4 +1,5 @@
-﻿using Minibank.Core.Exceptions.FriendlyException;
+﻿using System;
+using Minibank.Core.Exceptions.FriendlyException;
 
 namespace Minibank.Core.Converters
 {
@@ -9,18 +10,20 @@ namespace Minibank.Core.Converters
         public CurrencyConverter(ICurrencyRateProvider currencyRateProvider) => 
             _currencyRateProvider = currencyRateProvider;
 
-        public long Convert(int sumConvert, CodeCurrency targetCodeCurrency)
+        public double Convert(double amount, Currency fromCurrency, Currency toCurrency)
         {
-            if (sumConvert < 0) 
-                throw new UserFriendlyException("Сумма первода не может быть отрицательной!");
-            
-            long resultConversion;
-            checked
+            if (amount < 0)
             {
-                resultConversion = (long)sumConvert * _currencyRateProvider.GetCurrencyRate(targetCodeCurrency);
+                throw new ValidationException("Сумма первода не может быть отрицательной!");
             }
-            
-            return resultConversion;
+
+            // TODO Change algorithm
+            if (toCurrency == Currency.RUB)
+                return amount * _currencyRateProvider.GetCurrencyRate(fromCurrency);
+            if (fromCurrency == Currency.RUB)
+                return amount / _currencyRateProvider.GetCurrencyRate(toCurrency);
+            return amount * _currencyRateProvider.GetCurrencyRate(fromCurrency) /
+                   _currencyRateProvider.GetCurrencyRate(toCurrency);
         }
     }
 }
