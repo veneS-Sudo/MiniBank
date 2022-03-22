@@ -1,7 +1,7 @@
 ﻿using System;
 using Minibank.Core.Converters;
 
-namespace Minibank.Web.Controllers.Accounts.DTO
+namespace Minibank.Web.Controllers.Accounts.Dto
 {
     public class BankAccountDto
     {

@@ -1,4 +1,4 @@
-﻿namespace Minibank.Web.Controllers.Users.DTO
+﻿namespace Minibank.Web.Controllers.Users.Dto
 {
     public class UserDto
     {

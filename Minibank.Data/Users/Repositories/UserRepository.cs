@@ -16,17 +16,18 @@ namespace Minibank.Data.Users.Repositories
             var entity = _userEntities.FirstOrDefault(user => user.Id.Equals(id));
             if (entity == null)
             {
-                throw new ValidationException("Не существует такого пользователя.");
+                throw new ObjectNotFoundException($"Не существует пользователя c идентификатором {id}");
             }
                 
-            return new User 
-                {   Id = entity.Id,
-                    Login = entity.Login,
-                    Email = entity.Email 
-                };
+            return new User
+            {
+                Id = entity.Id,
+                Login = entity.Login,
+                Email = entity.Email
+            };
         }
 
-        public IEnumerable<User> GetAllUsers()
+        public List<User> GetAllUsers()
         {
             return
                 _userEntities.Select(
@@ -35,16 +36,17 @@ namespace Minibank.Data.Users.Repositories
                         Id = userModel.Id,
                         Login = userModel.Login,
                         Email = userModel.Email
-                    });
+                    }).ToList();
         }
 
         public void CreateUser(User user)
         {
-            var entity = new UserEntity 
-                {   Id = Guid.NewGuid().ToString(), 
-                    Login = user.Login,
-                    Email = user.Email 
-                };
+            var entity = new UserEntity
+            {
+                Id = Guid.NewGuid().ToString(),
+                Login = user.Login,
+                Email = user.Email
+            };
             
             _userEntities.Add(entity);
         }
@@ -54,7 +56,7 @@ namespace Minibank.Data.Users.Repositories
             var entity = _userEntities.FirstOrDefault(userModel => userModel.Id == user.Id);
             if (entity == null)
             {
-                throw new ValidationException("Не существует такого пользователя.");
+                throw new ObjectNotFoundException($"Не существует пользователя c идентификатором {user.Id}");
             }
             
             entity.Login = user.Login;
@@ -66,7 +68,7 @@ namespace Minibank.Data.Users.Repositories
             var entity = _userEntities.FirstOrDefault(userModel => userModel.Id == id);
             if (entity == null)
             {
-                throw new ValidationException("Не существует такого пользователя.");
+                throw new ObjectNotFoundException($"Не существует пользователя c идентификатором {id}");
             }
             
             _userEntities.Remove(entity);

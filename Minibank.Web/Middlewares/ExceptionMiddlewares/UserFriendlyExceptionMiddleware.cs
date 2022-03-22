@@ -20,10 +20,15 @@ namespace Minibank.Web.Middlewares.ExceptionMiddlewares
             {
                 await _next(context);
             }
-            catch (ValidationException friendlyException)
+            catch (ValidationException validationException)
             {
                 context.Response.StatusCode = StatusCodes.Status400BadRequest;
-                await context.Response.WriteAsJsonAsync(friendlyException.Message);
+                await context.Response.WriteAsJsonAsync(validationException.Message);
+            }
+            catch (ObjectNotFoundException objectNotFoundException)
+            {
+                context.Response.StatusCode = StatusCodes.Status400BadRequest;
+                await context.Response.WriteAsJsonAsync(objectNotFoundException.Message);    
             }
         }
     }

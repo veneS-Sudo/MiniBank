@@ -3,7 +3,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Minibank.Core.Domains.Users;
 using Minibank.Core.Domains.Users.Services;
-using Minibank.Web.Controllers.Users.DTO;
+using Minibank.Web.Controllers.Users.Dto;
 
 namespace Minibank.Web.Controllers.Users
 {

@@ -1,7 +1,6 @@
 ﻿using Minibank.Core.Converters;
-using Minibank.Core.Domains.Accounts;
 
-namespace Minibank.Core.Domains.Users
+namespace Minibank.Core.Domains.Transfers
 {
     public class Transfer
     {

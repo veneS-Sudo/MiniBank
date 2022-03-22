@@ -4,7 +4,7 @@ using System.Linq;
 using Minibank.Core.Converters;
 using Minibank.Core.Domains.Accounts;
 using Minibank.Core.Domains.Accounts.Repositories;
-using Minibank.Core.Domains.Users;
+using Minibank.Core.Domains.Transfers;
 using Minibank.Core.Exceptions.FriendlyException;
 
 namespace Minibank.Data.Users.Accounts.Repositories
@@ -12,14 +12,13 @@ namespace Minibank.Data.Users.Accounts.Repositories
     public class BankAccountRepository : IBankAccountRepository
     {
         private static List<BankAccountEntity> _accountEntities = new();
-        private static List<Transfer> _transferHistory = new();
 
         public BankAccount GetById(string id)
         {
             var entity = _accountEntities.FirstOrDefault(account => account.Id.Equals(id));
             if (entity == null)
             {
-                throw new ValidationException("Не такого аккаунта!");
+                throw new ObjectNotFoundException($"Ааккаунт с id:{id}, не найден!");
             }
 
             return new BankAccount
@@ -34,7 +33,7 @@ namespace Minibank.Data.Users.Accounts.Repositories
             };
         }
 
-        public IEnumerable<BankAccount> GetAllAccounts()
+        public List<BankAccount> GetAllAccounts()
         {
             return _accountEntities.Select(accountModel => new BankAccount
             {
@@ -45,7 +44,7 @@ namespace Minibank.Data.Users.Accounts.Repositories
                 IsOpen = accountModel.IsOpen,
                 DateOpen = accountModel.DateOpen,
                 DateClose = accountModel.DateClose
-            });
+            }).ToList();
         }
 
         public void CreateAccount(string id, Currency currency)
@@ -64,11 +63,15 @@ namespace Minibank.Data.Users.Accounts.Repositories
 
         public void UpdateAccount(BankAccount account)
         {
-            var entity = new BankAccountEntity
+            var targetAccount = _accountEntities.FirstOrDefault(entity => entity.Id == account.Id);
+
+            if (targetAccount == null)
             {
-                Balance = account.Balance,
-                Currency = account.Currency
-            };
+                throw new ObjectNotFoundException($"Ааккаунт с id:{account.Id}, не найден!");
+            }
+            
+            targetAccount.Balance = account.Balance;
+            targetAccount.Currency = account.Currency;
         }
 
         public bool ExistsByUserId(string id)
@@ -78,13 +81,13 @@ namespace Minibank.Data.Users.Accounts.Repositories
 
         public void CloseAccount(string id)
         {
-            var entity = GetById(id);
+            var entity = _accountEntities.FirstOrDefault(account => account.Id.Equals(id));
+            if (entity == null)
+            {
+                throw new ObjectNotFoundException($"Ааккаунт с id:{id}, не найден!");
+            }
+            
             entity.IsOpen = false;
-        }
-
-        public void SaveTransfer(Transfer transfer)
-        {
-            _transferHistory.Add(transfer);
         }
     }
 }

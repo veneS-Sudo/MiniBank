@@ -4,9 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 using Minibank.Core.Converters;
 using Minibank.Core.Domains.Accounts;
 using Minibank.Core.Domains.Accounts.Services;
+using Minibank.Core.Domains.Transfers;
 using Minibank.Core.Domains.Users;
-using Minibank.Web.Controllers.Accounts.DTO;
-using Minibank.Web.Controllers.Users.DTO;
+using Minibank.Web.Controllers.Accounts.Dto;
 
 namespace Minibank.Web.Controllers.Accounts
 {

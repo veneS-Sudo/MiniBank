@@ -1,7 +1,6 @@
 ﻿using Minibank.Core.Converters;
-using Minibank.Data.Users.Accounts;
 
-namespace Minibank.Data
+namespace Minibank.Data.Transfers
 {
     public class TransferEntity
     {

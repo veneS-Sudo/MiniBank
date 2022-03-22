@@ -21,7 +21,7 @@ namespace Minibank.Core.Domains.Users.Services
             return _userRepository.GetById(id);
         }
 
-        public IEnumerable<User> GetAllUsers()
+        public List<User> GetAllUsers()
         {
             return _userRepository.GetAllUsers();
         }
@@ -38,9 +38,9 @@ namespace Minibank.Core.Domains.Users.Services
 
         public void DeleteUser(string id)
         {
-            if (!_accountRepository.ExistsByUserId(id))
+            if (_accountRepository.ExistsByUserId(id))
             {
-                throw new ValidationException("Невозможно удалить пользователя с существущим аккаунтом.");
+                throw new ValidationException($"Невозможно удалить пользователя по id:{id}, так как у него есть аккаунт(ы).");
             }
             
             _userRepository.DeleteUser(id);

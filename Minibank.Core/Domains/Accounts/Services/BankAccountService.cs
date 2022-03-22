@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using Minibank.Core.Converters;
 using Minibank.Core.Domains.Accounts.Repositories;
+using Minibank.Core.Domains.Transfers;
+using Minibank.Core.Domains.Transfers.Repositories;
 using Minibank.Core.Domains.Users;
 using Minibank.Core.Domains.Users.Repositories;
 using Minibank.Core.Exceptions.FriendlyException;
@@ -12,14 +14,16 @@ namespace Minibank.Core.Domains.Accounts.Services
     {
         private readonly IBankAccountRepository _accountRepository;
         private readonly IUserRepository _userRepository;
+        private readonly ITransferRepository _transferRepository;
         private readonly ICurrencyConverter _currencyConverter;
 
         public BankAccountService(IBankAccountRepository accountRepository,
-            IUserRepository userRepository, ICurrencyConverter currencyConverter)
+            IUserRepository userRepository, ICurrencyConverter currencyConverter, ITransferRepository transferRepository)
         {
             _accountRepository = accountRepository;
             _userRepository = userRepository;
             _currencyConverter = currencyConverter;
+            _transferRepository = transferRepository;
         }
 
         public BankAccount GetById(string id)
@@ -27,16 +31,16 @@ namespace Minibank.Core.Domains.Accounts.Services
             return _accountRepository.GetById(id);
         }
 
-        public IEnumerable<BankAccount> GetAllAccounts()
+        public List<BankAccount> GetAllAccounts()
         {
             return _accountRepository.GetAllAccounts();
         }
 
         public void CreateAccount(string id, Currency currency)
         {
-            if (_userRepository.GetById(id) == null)
+            if (_userRepository.Exists(id))
             {
-                throw new ValidationException("Невозможно создать аккунт для пользователя по данному id.");
+                throw new ValidationException($"Невозможно создать аккунт для пользователя c id:{id}");
             }
             
             _accountRepository.CreateAccount(id, currency);
@@ -49,15 +53,16 @@ namespace Minibank.Core.Domains.Accounts.Services
         
         public void CloseAccount(string id)
         {
-            BankAccount account = _accountRepository.GetById(id);
+            var account = _accountRepository.GetById(id);
             if (!account.IsOpen)
             {
-                throw new ValidationException("Аккаунт уже закрыт!");
+                throw new ValidationException($"Аккаунт по id:{id}, уже закрыт!");
             }
             
             if (account.Balance != 0)
             {
-                throw new ValidationException("При удалении аккаунта баланс на счету должен быть нулевым!");
+                throw new ValidationException(
+                    $"У аккаунта по id:{id} баланс не равен нулю. При удалении баланс на счету должен быть нулевым!");
             }
             
             _accountRepository.CloseAccount(id);            
@@ -69,7 +74,9 @@ namespace Minibank.Core.Domains.Accounts.Services
             var toAccount = _accountRepository.GetById(transfer.ToAccountId);
 
             if (fromAccount.UserId == toAccount.UserId)
+            {
                 return 0;
+            }
 
             return Math.Round(transfer.Amount * 0.02, 2);
         }
@@ -93,7 +100,7 @@ namespace Minibank.Core.Domains.Accounts.Services
             transfer.Amount -= CalculateCommission(transfer);
             toAccount.Balance += conversionAmount;
             
-            _accountRepository.SaveTransfer(transfer);
+            _transferRepository.CreateTransfer(transfer);
         }
     }
 }
