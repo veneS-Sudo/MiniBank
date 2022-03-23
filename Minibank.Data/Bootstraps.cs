@@ -5,9 +5,9 @@ using Minibank.Core.Converters;
 using Minibank.Core.Domains.Accounts.Repositories;
 using Minibank.Core.Domains.Transfers.Repositories;
 using Minibank.Core.Domains.Users.Repositories;
+using Minibank.Data.Accounts.Repositories;
 using Minibank.Data.CurrencyProviders;
 using Minibank.Data.Transfers.Repositories;
-using Minibank.Data.Users.Accounts.Repositories;
 using Minibank.Data.Users.Repositories;
 
 namespace Minibank.Data

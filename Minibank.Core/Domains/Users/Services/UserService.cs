@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Minibank.Core.Domains.Accounts.Repositories;
 using Minibank.Core.Domains.Users.Repositories;
-using Minibank.Core.Exceptions.FriendlyException;
+using Minibank.Core.Exceptions.FriendlyExceptions;
 
 namespace Minibank.Core.Domains.Users.Services
 {

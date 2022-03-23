@@ -1,5 +1,5 @@
 ﻿using System;
-using Minibank.Core.Exceptions.FriendlyException;
+using Minibank.Core.Exceptions.FriendlyExceptions;
 
 namespace Minibank.Core.Converters
 {

@@ -4,9 +4,8 @@ using Minibank.Core.Converters;
 using Minibank.Core.Domains.Accounts.Repositories;
 using Minibank.Core.Domains.Transfers;
 using Minibank.Core.Domains.Transfers.Repositories;
-using Minibank.Core.Domains.Users;
 using Minibank.Core.Domains.Users.Repositories;
-using Minibank.Core.Exceptions.FriendlyException;
+using Minibank.Core.Exceptions.FriendlyExceptions;
 
 namespace Minibank.Core.Domains.Accounts.Services
 {
@@ -38,7 +37,7 @@ namespace Minibank.Core.Domains.Accounts.Services
 
         public void CreateAccount(string id, Currency currency)
         {
-            if (_userRepository.Exists(id))
+            if (!_userRepository.Exists(id))
             {
                 throw new ValidationException($"Невозможно создать аккунт для пользователя c id:{id}");
             }
@@ -101,6 +100,8 @@ namespace Minibank.Core.Domains.Accounts.Services
             toAccount.Balance += conversionAmount;
             
             _transferRepository.CreateTransfer(transfer);
+            _accountRepository.UpdateAccount(fromAccount);
+            _accountRepository.UpdateAccount(toAccount);
         }
     }
 }

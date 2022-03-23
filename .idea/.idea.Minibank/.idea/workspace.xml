@@ -9,42 +9,43 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d718a96e-6eaf-493c-afe3-bb5593d93882" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Minibank.Core/Domains/Transfers/Repositories/ITransferRepository.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Minibank.Core/Exceptions/FriendlyExceptions/ObjectNotFoundException.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Minibank.Data/Transfers/Repositories/TransferRepository.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Minibank/.idea/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Minibank/.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Minibank.Web/Controllers/Accounts/Dto/CreateAccountDto.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Minibank.Web/Controllers/Accounts/Dto/UpdateAccountDto.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Minibank.Web/Controllers/MoneyTransfers/Dto/CreateTransferDto.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Minibank.Web/Controllers/Users/Dto/CreateUserDto.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Minibank.Web/Controllers/Users/Dto/UpdateUserDto.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Minibank/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Minibank/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Minibank.Core/Converters/CurrencyConverter.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Minibank.Core/Converters/CurrencyConverter.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Minibank.Core/Domains/Accounts/BankAccount.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Minibank.Core/Domains/Accounts/BankAccount.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Minibank.Core/Domains/Accounts/Repositories/IBankAccountRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Minibank.Core/Domains/Accounts/Repositories/IBankAccountRepository.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Minibank.Core/Domains/Accounts/Services/BankAccountService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Minibank.Core/Domains/Accounts/Services/BankAccountService.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Minibank.Core/Domains/Accounts/Services/IBankAccountService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Minibank.Core/Domains/Accounts/Services/IBankAccountService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Minibank.Core/Domains/Transfer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Minibank.Core/Domains/Transfers/Transfer.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Minibank.Core/Domains/Users/Repositories/IUserRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Minibank.Core/Domains/Users/Repositories/IUserRepository.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Minibank.Core/Domains/Users/Services/IUserService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Minibank.Core/Domains/Users/Services/IUserService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Minibank.Core/Domains/Transfers/Repositories/ITransferRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Minibank.Core/Domains/Transfers/Repositories/ITransferRepository.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Minibank.Core/Domains/Users/Services/UserService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Minibank.Core/Domains/Users/Services/UserService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Minibank.Core/Exceptions/FriendlyExceptions/ObjectNotFoundException.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Minibank.Core/Exceptions/FriendlyExceptions/ObjectNotFoundException.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Minibank.Core/Exceptions/FriendlyExceptions/ValidationException.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Minibank.Core/Exceptions/FriendlyExceptions/ValidationException.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Minibank.Core/bin/Debug/net5.0/Minibank.Core.dll" beforeDir="false" afterPath="$PROJECT_DIR$/Minibank.Core/bin/Debug/net5.0/Minibank.Core.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Minibank.Core/bin/Debug/net5.0/Minibank.Core.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/Minibank.Core/bin/Debug/net5.0/Minibank.Core.pdb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Minibank.Core/obj/Debug/net5.0/Minibank.Core.csproj.CoreCompileInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/Minibank.Core/obj/Debug/net5.0/Minibank.Core.csproj.CoreCompileInputs.cache" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Minibank.Core/obj/Debug/net5.0/Minibank.Core.dll" beforeDir="false" afterPath="$PROJECT_DIR$/Minibank.Core/obj/Debug/net5.0/Minibank.Core.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Minibank.Core/obj/Debug/net5.0/Minibank.Core.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/Minibank.Core/obj/Debug/net5.0/Minibank.Core.pdb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Minibank.Core/obj/Debug/net5.0/ref/Minibank.Core.dll" beforeDir="false" afterPath="$PROJECT_DIR$/Minibank.Core/obj/Debug/net5.0/ref/Minibank.Core.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Minibank.Core/obj/Debug/net5.0/refint/Minibank.Core.dll" beforeDir="false" afterPath="$PROJECT_DIR$/Minibank.Core/obj/Debug/net5.0/refint/Minibank.Core.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Minibank.Data/Accounts/BankAccountEntity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Minibank.Data/Accounts/BankAccountEntity.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Minibank.Data/Accounts/Repositories/BankAccountRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Minibank.Data/Accounts/Repositories/BankAccountRepository.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Minibank.Data/Bootstraps.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Minibank.Data/Bootstraps.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Minibank.Data/TransferEntity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Minibank.Data/Transfers/TransferEntity.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Minibank.Data/CurrencyProviders/CurrencyRateHttpProvider.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Minibank.Data/CurrencyProviders/CurrencyRateHttpProvider.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Minibank.Data/Transfers/Repositories/TransferRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Minibank.Data/Transfers/Repositories/TransferRepository.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Minibank.Data/Users/Repositories/UserRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Minibank.Data/Users/Repositories/UserRepository.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Minibank.Data/bin/Debug/net5.0/Minibank.Core.dll" beforeDir="false" afterPath="$PROJECT_DIR$/Minibank.Data/bin/Debug/net5.0/Minibank.Core.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Minibank.Data/bin/Debug/net5.0/Minibank.Core.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/Minibank.Data/bin/Debug/net5.0/Minibank.Core.pdb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Minibank.Data/bin/Debug/net5.0/Minibank.Data.dll" beforeDir="false" afterPath="$PROJECT_DIR$/Minibank.Data/bin/Debug/net5.0/Minibank.Data.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Minibank.Data/bin/Debug/net5.0/Minibank.Data.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/Minibank.Data/bin/Debug/net5.0/Minibank.Data.pdb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Minibank.Data/obj/Debug/net5.0/Minibank.Data.csproj.AssemblyReference.cache" beforeDir="false" afterPath="$PROJECT_DIR$/Minibank.Data/obj/Debug/net5.0/Minibank.Data.csproj.AssemblyReference.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Minibank.Data/obj/Debug/net5.0/Minibank.Data.csproj.CoreCompileInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/Minibank.Data/obj/Debug/net5.0/Minibank.Data.csproj.CoreCompileInputs.cache" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Minibank.Data/obj/Debug/net5.0/Minibank.Data.dll" beforeDir="false" afterPath="$PROJECT_DIR$/Minibank.Data/obj/Debug/net5.0/Minibank.Data.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Minibank.Data/obj/Debug/net5.0/Minibank.Data.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/Minibank.Data/obj/Debug/net5.0/Minibank.Data.pdb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Minibank.Data/obj/Debug/net5.0/ref/Minibank.Data.dll" beforeDir="false" afterPath="$PROJECT_DIR$/Minibank.Data/obj/Debug/net5.0/ref/Minibank.Data.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Minibank.Data/obj/Debug/net5.0/refint/Minibank.Data.dll" beforeDir="false" afterPath="$PROJECT_DIR$/Minibank.Data/obj/Debug/net5.0/refint/Minibank.Data.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Minibank.Web/Controllers/Accounts/BankAccountController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Minibank.Web/Controllers/Accounts/BankAccountController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Minibank.Web/Controllers/Accounts/DTO/BankAccountDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Minibank.Web/Controllers/Accounts/Dto/BankAccountDto.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Minibank.Web/Controllers/Users/DTO/UserDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Minibank.Web/Controllers/Users/Dto/UserDto.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Minibank.Web/Controllers/Users/UserController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Minibank.Web/Controllers/Users/UserController.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Minibank.Web/Middlewares/ExceptionMiddlewares/UserFriendlyExceptionMiddleware.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Minibank.Web/Middlewares/ExceptionMiddlewares/UserFriendlyExceptionMiddleware.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Minibank.Web/bin/Debug/net5.0/Minibank.Core.dll" beforeDir="false" afterPath="$PROJECT_DIR$/Minibank.Web/bin/Debug/net5.0/Minibank.Core.dll" afterDir="false" />
@@ -54,6 +55,7 @@
       <change beforePath="$PROJECT_DIR$/Minibank.Web/bin/Debug/net5.0/Minibank.Web.dll" beforeDir="false" afterPath="$PROJECT_DIR$/Minibank.Web/bin/Debug/net5.0/Minibank.Web.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Minibank.Web/bin/Debug/net5.0/Minibank.Web.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/Minibank.Web/bin/Debug/net5.0/Minibank.Web.pdb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Minibank.Web/obj/Debug/net5.0/Minibank.Web.csproj.AssemblyReference.cache" beforeDir="false" afterPath="$PROJECT_DIR$/Minibank.Web/obj/Debug/net5.0/Minibank.Web.csproj.AssemblyReference.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Minibank.Web/obj/Debug/net5.0/Minibank.Web.csproj.CoreCompileInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/Minibank.Web/obj/Debug/net5.0/Minibank.Web.csproj.CoreCompileInputs.cache" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Minibank.Web/obj/Debug/net5.0/Minibank.Web.dll" beforeDir="false" afterPath="$PROJECT_DIR$/Minibank.Web/obj/Debug/net5.0/Minibank.Web.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Minibank.Web/obj/Debug/net5.0/Minibank.Web.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/Minibank.Web/obj/Debug/net5.0/Minibank.Web.pdb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Minibank.Web/obj/Debug/net5.0/ref/Minibank.Web.dll" beforeDir="false" afterPath="$PROJECT_DIR$/Minibank.Web/obj/Debug/net5.0/ref/Minibank.Web.dll" afterDir="false" />
@@ -156,7 +158,9 @@
       <workItem from="1647375415749" duration="6111000" />
       <workItem from="1647536932184" duration="8876000" />
       <workItem from="1647597552699" duration="23385000" />
-      <workItem from="1647900853884" duration="8565000" />
+      <workItem from="1647900853884" duration="9320000" />
+      <workItem from="1647946112515" duration="311000" />
+      <workItem from="1648030589155" duration="8758000" />
     </task>
     <servers />
   </component>
@@ -179,5 +183,24 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Minibank.Web/Controllers/Accounts/BankAccountController.cs</url>
+          <line>56</line>
+          <properties documentPath="C:\Users\veryw\RiderProjects\minibank\Minibank.Web\Controllers\Accounts\BankAccountController.cs" initialLine="56" containingFunctionPresentation="method 'TransferAmount'">
+            <startOffsets>
+              <option value="1812" />
+            </startOffsets>
+            <endOffsets>
+              <option value="2143" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

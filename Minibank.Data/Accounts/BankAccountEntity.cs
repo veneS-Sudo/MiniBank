@@ -1,7 +1,7 @@
 ﻿using System;
 using Minibank.Core.Converters;
 
-namespace Minibank.Data.Users.Accounts
+namespace Minibank.Data.Accounts
 {
     public class BankAccountEntity
     {

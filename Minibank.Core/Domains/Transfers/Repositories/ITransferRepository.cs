@@ -5,11 +5,11 @@ namespace Minibank.Core.Domains.Transfers.Repositories
 {
     public interface ITransferRepository
     {
-        public Transfer GetById(string id);
-        public List<Transfer> GetAllTransfers();
-        public void CreateTransfer(double amount, string fromAccountId, string toAccountId, Currency currency);
-        public void CreateTransfer(Transfer transfer);
-        public void UpdateTransfer(Transfer transfer);
-        public void DeleteTransfer(string id);
+        Transfer GetById(string id);
+        List<Transfer> GetAllTransfers();
+        void CreateTransfer(double amount, string fromAccountId, string toAccountId, Currency currency);
+        void CreateTransfer(Transfer transfer);
+        void UpdateTransfer(Transfer transfer);
+        void DeleteTransfer(string id);
     }
 }

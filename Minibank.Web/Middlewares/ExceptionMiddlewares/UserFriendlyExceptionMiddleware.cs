@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using Minibank.Core.Exceptions.FriendlyException;
+using Minibank.Core.Exceptions.FriendlyExceptions;
 
 namespace Minibank.Web.Middlewares.ExceptionMiddlewares
 {

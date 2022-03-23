@@ -31,42 +31,41 @@ namespace Minibank.Web.Controllers.Users
         }
 
         [HttpGet]
-        public IEnumerable<UserDto> GetAllUsers()
+        public List<UserDto> GetAllUsers()
         {
             return _userService.GetAllUsers().Select(entity => new UserDto
             {
                 Id = entity.Id,
                 Login = entity.Login,
                 Email = entity.Email
-            });
+            }).ToList();
         }
 
         [HttpPost]
-        public void CreateUser(UserDto user)
+        public void CreateUser(CreateUserDto user)
         {
             _userService.CreateUser(new User
             {
-                Id = user.Id,
                 Login = user.Login,
                 Email = user.Email
             });
         }
 
-        [HttpPut]
-        public void UpdateUser(UserDto user)
+        [HttpPut("{userId}")]
+        public void UpdateUser(string userId, UpdateUserDto user)
         {
             _userService.UpdateUser(new User
             {
-                Id = user.Id,
+                Id = userId,
                 Login = user.Login,
                 Email = user.Email
             });
         }
 
         [HttpDelete]
-        public void DeleteUser(string id)
+        public void DeleteUser(string userId)
         {
-            _userService.DeleteUser(id);
+            _userService.DeleteUser(userId);
         }
     }
 }

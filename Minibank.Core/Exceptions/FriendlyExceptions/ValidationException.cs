@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Minibank.Core.Exceptions.FriendlyException
+namespace Minibank.Core.Exceptions.FriendlyExceptions
 {
     public class ValidationException : Exception
     {

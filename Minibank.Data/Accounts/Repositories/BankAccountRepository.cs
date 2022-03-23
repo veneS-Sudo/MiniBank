@@ -4,10 +4,9 @@ using System.Linq;
 using Minibank.Core.Converters;
 using Minibank.Core.Domains.Accounts;
 using Minibank.Core.Domains.Accounts.Repositories;
-using Minibank.Core.Domains.Transfers;
-using Minibank.Core.Exceptions.FriendlyException;
+using Minibank.Core.Exceptions.FriendlyExceptions;
 
-namespace Minibank.Data.Users.Accounts.Repositories
+namespace Minibank.Data.Accounts.Repositories
 {
     public class BankAccountRepository : IBankAccountRepository
     {
@@ -15,7 +14,7 @@ namespace Minibank.Data.Users.Accounts.Repositories
 
         public BankAccount GetById(string id)
         {
-            var entity = _accountEntities.FirstOrDefault(account => account.Id.Equals(id));
+            var entity = _accountEntities.FirstOrDefault(account => account.Id == id);
             if (entity == null)
             {
                 throw new ObjectNotFoundException($"Ааккаунт с id:{id}, не найден!");
@@ -81,7 +80,7 @@ namespace Minibank.Data.Users.Accounts.Repositories
 
         public void CloseAccount(string id)
         {
-            var entity = _accountEntities.FirstOrDefault(account => account.Id.Equals(id));
+            var entity = _accountEntities.FirstOrDefault(account => account.Id == id);
             if (entity == null)
             {
                 throw new ObjectNotFoundException($"Ааккаунт с id:{id}, не найден!");

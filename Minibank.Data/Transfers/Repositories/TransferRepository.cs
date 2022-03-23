@@ -4,7 +4,7 @@ using System.Linq;
 using Minibank.Core.Converters;
 using Minibank.Core.Domains.Transfers;
 using Minibank.Core.Domains.Transfers.Repositories;
-using Minibank.Core.Exceptions.FriendlyException;
+using Minibank.Core.Exceptions.FriendlyExceptions;
 
 namespace Minibank.Data.Transfers.Repositories
 {

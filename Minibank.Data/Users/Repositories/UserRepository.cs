@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Minibank.Core.Domains.Users;
 using Minibank.Core.Domains.Users.Repositories;
-using Minibank.Core.Exceptions.FriendlyException;
+using Minibank.Core.Exceptions.FriendlyExceptions;
 
 namespace Minibank.Data.Users.Repositories
 {
@@ -13,7 +13,7 @@ namespace Minibank.Data.Users.Repositories
 
         public User GetById(string id)
         {
-            var entity = _userEntities.FirstOrDefault(user => user.Id.Equals(id));
+            var entity = _userEntities.FirstOrDefault(user => user.Id == id);
             if (entity == null)
             {
                 throw new ObjectNotFoundException($"Не существует пользователя c идентификатором {id}");

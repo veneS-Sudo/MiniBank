@@ -1,6 +1,5 @@
 ﻿using System;
 using Minibank.Core.Converters;
-using Minibank.Core.Domains.Users;
 
 namespace Minibank.Core.Domains.Accounts
 {

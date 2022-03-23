@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using Minibank.Core.Converters;
 using Minibank.Core.Domains.Accounts;
 using Minibank.Core.Domains.Accounts.Services;
 using Minibank.Core.Domains.Transfers;
-using Minibank.Core.Domains.Users;
 using Minibank.Web.Controllers.Accounts.Dto;
+using Minibank.Web.Controllers.MoneyTransfers.Dto;
 
 namespace Minibank.Web.Controllers.Accounts
 {
@@ -38,7 +37,7 @@ namespace Minibank.Web.Controllers.Accounts
         }
 
         [HttpGet]
-        public IEnumerable<BankAccountDto> GetAllAccount()
+        public List<BankAccountDto> GetAllAccount()
         {
             return _accountService.GetAllAccounts().Select(account => new BankAccountDto
             {
@@ -49,29 +48,29 @@ namespace Minibank.Web.Controllers.Accounts
                 IsOpen = account.IsOpen,
                 DateOpen = account.DateOpen,
                 DateClose = account.DateClose
-            });
+            }).ToList();
         }
 
-        [HttpGet("/transfer")]
-        public void TransferAmount(double amount, string fromAccountId, string toAccountId)
+        [HttpPost("/transfer")]
+        public void TransferAmount(CreateTransferDto amountTransfer)
         {
             _accountService.TransferAmount(new Transfer
             {
-                Amount = amount,
-                Currency = _accountService.GetById(fromAccountId).Currency,
-                FromAccountId = fromAccountId,
-                ToAccountId = toAccountId
+                Amount = amountTransfer.Amount,
+                Currency = _accountService.GetById(amountTransfer.FromAccountId).Currency,
+                FromAccountId = amountTransfer.FromAccountId,
+                ToAccountId = amountTransfer.ToAccountId
             });
         }
 
-        [HttpPost("{userId}")]
-        public void CreateAccount(string userId, Currency currency)
+        [HttpPost]
+        public void CreateAccount(CreateAccountDto account)
         {
-            _accountService.CreateAccount(userId, currency);
+            _accountService.CreateAccount(account.UserId, account.Currency);
         }
 
         [HttpPut("{accountId}")]
-        public void UpdateAccount(string accountId, BankAccountDto account)
+        public void UpdateAccount(string accountId, UpdateAccountDto account)
         {
             _accountService.UpdateAccount(new BankAccount
             {

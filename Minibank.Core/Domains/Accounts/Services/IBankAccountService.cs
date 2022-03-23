@@ -7,12 +7,12 @@ namespace Minibank.Core.Domains.Accounts.Services
 {
     public interface IBankAccountService
     {
-        public BankAccount GetById(string id);
-        public List<BankAccount> GetAllAccounts();
-        public void CreateAccount(string id, Currency currency);
-        public void UpdateAccount(BankAccount account);
-        public void CloseAccount(string id);
-        public double CalculateCommission(Transfer transfer);
-        public void TransferAmount(Transfer transfer);
+        BankAccount GetById(string id);
+        List<BankAccount> GetAllAccounts();
+        void CreateAccount(string id, Currency currency);
+        void UpdateAccount(BankAccount account);
+        void CloseAccount(string id);
+        double CalculateCommission(Transfer transfer);
+        void TransferAmount(Transfer transfer);
     }
 }
