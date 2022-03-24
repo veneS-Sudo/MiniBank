@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using Minibank.Core.Exceptions.FriendlyException;
+using Minibank.Core.Exceptions.FriendlyExceptions;
 
 namespace Minibank.Web.Middlewares.ExceptionMiddlewares
 {
@@ -20,10 +20,15 @@ namespace Minibank.Web.Middlewares.ExceptionMiddlewares
             {
                 await _next(context);
             }
-            catch (UserFriendlyException friendlyException)
+            catch (ValidationException validationException)
             {
                 context.Response.StatusCode = StatusCodes.Status400BadRequest;
-                await context.Response.WriteAsJsonAsync(friendlyException.Message);
+                await context.Response.WriteAsJsonAsync(validationException.Message);
+            }
+            catch (ObjectNotFoundException objectNotFoundException)
+            {
+                context.Response.StatusCode = StatusCodes.Status400BadRequest;
+                await context.Response.WriteAsJsonAsync(objectNotFoundException.Message);    
             }
         }
     }

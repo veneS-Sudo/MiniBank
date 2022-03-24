@@ -1,8 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "3uf9zDetrSXSyo1SOzrl4P73XaW1CA1C9uZ3yLabADREe4AJUuyqNbHbQnu4zejVPfFYJMV5OvDcNU+x0WT5Uw==",
+  "dgSpecHash": "jf6Htzug/jbSqkvUQsHWcAg/GriPiAuSUBuA2WAtkCY01EGQIUy5KXpwIztdOSXMddde6l3vNgRoxyAndncOdQ==",
   "success": true,
   "projectFilePath": "C:\\Users\\veryw\\RiderProjects\\Minibank\\Minibank.Core\\Minibank.Core.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\veryw\\.nuget\\packages\\microsoft.extensions.configuration.abstractions\\5.0.0\\microsoft.extensions.configuration.abstractions.5.0.0.nupkg.sha512",
+    "C:\\Users\\veryw\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\5.0.0\\microsoft.extensions.dependencyinjection.abstractions.5.0.0.nupkg.sha512",
+    "C:\\Users\\veryw\\.nuget\\packages\\microsoft.extensions.primitives\\5.0.0\\microsoft.extensions.primitives.5.0.0.nupkg.sha512"
+  ],
   "logs": []
 }
