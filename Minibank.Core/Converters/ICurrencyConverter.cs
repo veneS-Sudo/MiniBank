@@ -1,7 +1,9 @@
-﻿namespace Minibank.Core.Converters
+﻿using System.Threading.Tasks;
+
+namespace Minibank.Core.Converters
 {
     public interface ICurrencyConverter
     {
-        double Convert(double amount, Currency fromCurrency, Currency toCurrency);
+        Task<double> ConvertAsync(double amount, Currency fromCurrency, Currency toCurrency);
     }
 }

@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Minibank.Core.Domains.Users;
 using Minibank.Core.Domains.Users.Services;
@@ -8,64 +10,52 @@ using Minibank.Web.Controllers.Users.Dto;
 namespace Minibank.Web.Controllers.Users
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class UserController : ControllerBase
     {
+        private readonly IMapper _mapper;
         private readonly IUserService _userService;
 
-        public UserController(IUserService userService)
+        public UserController(IUserService userService, IMapper mapper)
         {
             _userService = userService;
+            _mapper = mapper;
         }
 
         [HttpGet("{id}")]
-        public UserDto GetUserById(string id)
+        public async Task<GetUserDto> GetUserById(string id)
         {
-            var entity = _userService.GetById(id);
-            return new UserDto
-            {
-                Id = entity.Id,
-                Login = entity.Login,
-                Email = entity.Email
-            };
+            var entity = await _userService.GetByIdAsync(id);
+            return _mapper.Map<GetUserDto>(entity);
         }
 
-        [HttpGet]
-        public List<UserDto> GetAllUsers()
+        [HttpGet("GetUsers")]
+        public async Task<List<GetUserDto>> GetAllUsers()
         {
-            return _userService.GetAllUsers().Select(entity => new UserDto
-            {
-                Id = entity.Id,
-                Login = entity.Login,
-                Email = entity.Email
-            }).ToList();
+            return (await _userService.GetAllUsersAsync())
+                .Select(entity => _mapper.Map<GetUserDto>(entity))
+                .ToList();
         }
 
-        [HttpPost]
-        public void CreateUser(CreateUserDto user)
+        [HttpPost("CreateUser")]
+        public Task CreateUser(CreateUserDto user)
         {
-            _userService.CreateUser(new User
-            {
-                Login = user.Login,
-                Email = user.Email
-            });
+            return _userService.CreateUserAsync(_mapper.Map<User>(user));
         }
 
-        [HttpPut("{userId}")]
-        public void UpdateUser(string userId, UpdateUserDto user)
+        [HttpPut("UpdateUser/{userId}")]
+        public Task UpdateUser(string userId, UpdateUserDto user)
         {
-            _userService.UpdateUser(new User
-            {
-                Id = userId,
-                Login = user.Login,
-                Email = user.Email
-            });
+            var targetUser = _mapper.Map<User>(user);
+            targetUser.Id = userId;
+            
+            return _userService.UpdateUserAsync(targetUser);
         }
 
-        [HttpDelete]
-        public void DeleteUser(string userId)
+        [HttpDelete("DeleteUser")]
+        public Task DeleteUser(string userId)
         {
-            _userService.DeleteUser(userId);
+            return _userService.DeleteUserAsync(userId);
         }
     }
 }

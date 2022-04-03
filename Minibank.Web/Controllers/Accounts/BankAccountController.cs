@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Minibank.Core.Domains.Accounts;
 using Minibank.Core.Domains.Accounts.Services;
@@ -10,80 +12,61 @@ using Minibank.Web.Controllers.MoneyTransfers.Dto;
 namespace Minibank.Web.Controllers.Accounts
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class BankAccountController : ControllerBase
     {
         private readonly IBankAccountService _accountService;
+        private readonly IMapper _mapper;
 
-        public BankAccountController(IBankAccountService accountService)
+        public BankAccountController(IBankAccountService accountService, IMapper mapper)
         {
             _accountService = accountService;
+            _mapper = mapper;
         }
 
-        [HttpGet("{id}")]
-        public BankAccountDto GetAccountById(string id)
+        [HttpGet("GetAccount/{id}")]
+        public async Task<GetBankAccountDto> GetAccountById(string id)
         {
-            var entity = _accountService.GetById(id);
-            return new BankAccountDto
-            {
-                Id = entity.Id,
-                UserId = entity.UserId,
-                Balance = entity.Balance,
-                Currency = entity.Currency,
-                IsOpen = entity.IsOpen,
-                DateOpen = entity.DateOpen,
-                DateClose = entity.DateClose
-            };
+            var account = await _accountService.GetByIdAsync(id);
+            return _mapper.Map<GetBankAccountDto>(account);
         }
 
-        [HttpGet]
-        public List<BankAccountDto> GetAllAccount()
+        [HttpGet("GetAccounts")]
+        public async Task<List<GetBankAccountDto>> GetAllAccount()
         {
-            return _accountService.GetAllAccounts().Select(account => new BankAccountDto
-            {
-                Id = account.Id,
-                UserId = account.UserId,
-                Balance = account.Balance,
-                Currency = account.Currency,
-                IsOpen = account.IsOpen,
-                DateOpen = account.DateOpen,
-                DateClose = account.DateClose
-            }).ToList();
+            return (await _accountService.GetAllAccountsAsync())
+                .Select(account => _mapper.Map<GetBankAccountDto>(account)).ToList();
         }
 
-        [HttpPost("/transfer")]
-        public void TransferAmount(CreateTransferDto amountTransfer)
+        [HttpPost("/CreateTransfer")]
+        public async Task TransferAmount(CreateMoneyTransferDto amountMoneyTransfer)
         {
-            _accountService.TransferAmount(new Transfer
-            {
-                Amount = amountTransfer.Amount,
-                Currency = _accountService.GetById(amountTransfer.FromAccountId).Currency,
-                FromAccountId = amountTransfer.FromAccountId,
-                ToAccountId = amountTransfer.ToAccountId
-            });
+            var fromAccount = await _accountService.GetByIdAsync(amountMoneyTransfer.FromBankAccountId);
+            var targetTransfer = _mapper.Map<MoneyTransfer>(amountMoneyTransfer);
+            targetTransfer.Currency = fromAccount.Currency;
+            
+            await _accountService.TransferAmountAsync(targetTransfer);
         }
 
-        [HttpPost]
-        public void CreateAccount(CreateAccountDto account)
+        [HttpPost("CreateAccount")]
+        public Task CreateAccount(CreateBankAccountDto account)
         {
-            _accountService.CreateAccount(account.UserId, account.Currency);
+            return _accountService.CreateAccountAsync(_mapper.Map<BankAccount>(account));
         }
 
-        [HttpPut("{accountId}")]
-        public void UpdateAccount(string accountId, UpdateAccountDto account)
+        [HttpPut("UpdateAccount/{accountId}")]
+        public Task UpdateAccount(string accountId, UpdateAccountDto account)
         {
-            _accountService.UpdateAccount(new BankAccount
-            {
-                Id = accountId,
-                Balance = account.Balance,
-                Currency = account.Currency
-            });
+            var targetAccount = _mapper.Map<BankAccount>(account);
+            targetAccount.Id = accountId;
+            
+            return _accountService.UpdateAccountAsync(targetAccount);
         }
 
-        [HttpDelete("{accountId}")]
-        public void CloseAccount(string accountId)
+        [HttpDelete("DeleteAccount")]
+        public Task CloseAccount(string accountId)
         {
-            _accountService.CloseAccount(accountId);
+            return _accountService.CloseAccountAsync(accountId);
         }
     }
 }

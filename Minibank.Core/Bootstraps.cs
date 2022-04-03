@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.Extensions.DependencyInjection;
 using Minibank.Core.Converters;
 using Minibank.Core.Domains.Accounts.Services;
@@ -13,6 +14,8 @@ namespace Minibank.Core
             services.AddScoped<ICurrencyConverter, CurrencyConverter>();
             services.AddScoped<IUserService,UserService>();
             services.AddScoped<IBankAccountService, BankAccountService>();
+
+            services.AddFluentValidation().AddValidatorsFromAssembly(typeof(UserService).Assembly);
             return services;
         }
     }

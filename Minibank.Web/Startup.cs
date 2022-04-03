@@ -1,20 +1,12 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.OpenApi.Models;
 using Minibank.Core;
-using Minibank.Core.Converters;
 using Minibank.Data;
-using Minibank.Data.CurrencyProviders;
 using Minibank.Web.Middlewares.ExceptionMiddlewares;
 
 namespace Minibank.Web
@@ -35,8 +27,11 @@ namespace Minibank.Web
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Minibank.Web", Version = "v1" });
             });
-            services.AddCore();
+           services.AddCore();
            services.AddData(Configuration);
+           
+           // Add auto mapper
+           services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

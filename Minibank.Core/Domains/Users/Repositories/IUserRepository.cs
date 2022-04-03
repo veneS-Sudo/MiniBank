@@ -1,14 +1,15 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Minibank.Core.Domains.Users.Repositories
 {
     public interface IUserRepository
     {
-        User GetById(string id);
-        List<User> GetAllUsers();
-        void CreateUser(User user);
-        void UpdateUser(User user);
-        void DeleteUser(string id);
-        bool Exists(string id);
+        Task<User> GetByIdAsync(string id);
+        Task<List<User>> GetAllUsersAsync();
+        Task CreateUserAsync(User user);
+        Task UpdateUserAsync(User user);
+        Task<bool> ExistsAsync(string id);
+        Task DeleteUserAsync(string id);
     }
 }
