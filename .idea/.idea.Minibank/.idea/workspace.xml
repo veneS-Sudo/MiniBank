@@ -8,10 +8,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d718a96e-6eaf-493c-afe3-bb5593d93882" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Minibank/.idea/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Minibank/.idea/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Minibank/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Minibank/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="d718a96e-6eaf-493c-afe3-bb5593d93882" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -136,7 +133,7 @@
       <workItem from="1648979247735" duration="5592000" />
       <workItem from="1649152523223" duration="3437000" />
       <workItem from="1649193888912" duration="3880000" />
-      <workItem from="1649249198739" duration="3218000" />
+      <workItem from="1649249198739" duration="3836000" />
     </task>
     <servers />
   </component>
