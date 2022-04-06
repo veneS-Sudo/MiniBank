@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
@@ -23,39 +24,41 @@ namespace Minibank.Web.Controllers.Users
         }
 
         [HttpGet("{id}")]
-        public async Task<GetUserDto> GetUserById(string id)
+        public async Task<GetUserDto> GetUserById(string id, CancellationToken cancellationToken)
         {
-            var entity = await _userService.GetByIdAsync(id);
+            var entity = await _userService.GetByIdAsync(id, cancellationToken);
             return _mapper.Map<GetUserDto>(entity);
         }
 
         [HttpGet("GetUsers")]
-        public async Task<List<GetUserDto>> GetAllUsers()
+        public async Task<List<GetUserDto>> GetAllUsers(CancellationToken cancellationToken)
         {
-            return (await _userService.GetAllUsersAsync())
-                .Select(entity => _mapper.Map<GetUserDto>(entity))
+            var users = await _userService.GetAllUsersAsync(cancellationToken);
+                
+            return users.Select(entity => _mapper.Map<GetUserDto>(entity))
                 .ToList();
         }
 
         [HttpPost("CreateUser")]
-        public Task CreateUser(CreateUserDto user)
+        public Task CreateUser(CreateUserDto user, CancellationToken cancellationToken)
         {
-            return _userService.CreateUserAsync(_mapper.Map<User>(user));
+            var targetUser = _mapper.Map<User>(user);
+            return _userService.CreateUserAsync(targetUser, cancellationToken);
         }
 
         [HttpPut("UpdateUser/{userId}")]
-        public Task UpdateUser(string userId, UpdateUserDto user)
+        public Task UpdateUser(string userId, UpdateUserDto user, CancellationToken cancellationToken)
         {
             var targetUser = _mapper.Map<User>(user);
             targetUser.Id = userId;
             
-            return _userService.UpdateUserAsync(targetUser);
+            return _userService.UpdateUserAsync(targetUser, cancellationToken);
         }
 
         [HttpDelete("DeleteUser")]
-        public Task DeleteUser(string userId)
+        public Task DeleteUser(string userId, CancellationToken cancellationToken)
         {
-            return _userService.DeleteUserAsync(userId);
+            return _userService.DeleteUserAsync(userId, cancellationToken);
         }
     }
 }

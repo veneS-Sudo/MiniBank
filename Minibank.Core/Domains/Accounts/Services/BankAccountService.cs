@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentValidation;
 using Minibank.Core.Converters;
@@ -36,64 +37,64 @@ namespace Minibank.Core.Domains.Accounts.Services
             _moneyTransferValidator = moneyTransferValidator;
         }
 
-        public Task<BankAccount> GetByIdAsync(string id)
+        public Task<BankAccount> GetByIdAsync(string id, CancellationToken cancellationToken)
         {
             if (string.IsNullOrEmpty(id))
             {
                 throw new ValidationException("id не должне быть пустым");
             }
             
-            return _accountRepository.GetByIdAsync(id);
+            return _accountRepository.GetByIdAsync(id, cancellationToken);
         }
 
-        public Task<List<BankAccount>> GetAllAccountsAsync()
+        public Task<List<BankAccount>> GetAllAccountsAsync(CancellationToken cancellationToken)
         {
-            return _accountRepository.GetAllAccountsAsync();
+            return _accountRepository.GetAllAccountsAsync(cancellationToken);
         }
 
-        public async Task CreateAccountAsync(BankAccount bankAccount)
+        public async Task CreateAccountAsync(BankAccount bankAccount, CancellationToken cancellationToken)
         {
-            await _createBankAccountValidator.ValidateAndThrowAsync(bankAccount);
-            await _accountRepository.CreateAccountAsync(bankAccount);
-            _unitOfWork.SaveChanges();
+            await _createBankAccountValidator.ValidateAndThrowAsync(bankAccount, cancellationToken);
+            await _accountRepository.CreateAccountAsync(bankAccount, cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task UpdateAccountAsync(BankAccount bankAccount)
+        public async Task UpdateAccountAsync(BankAccount bankAccount, CancellationToken cancellationToken)
         {
             if (string.IsNullOrEmpty(bankAccount.Id))
             {
                 throw new ValidationException("id не должне быть пустым");
             }
             
-            var targetBankAccount = await _accountRepository.GetByIdAsync(bankAccount.Id);
+            var targetBankAccount = await _accountRepository.GetByIdAsync(bankAccount.Id, cancellationToken);
             if (!targetBankAccount.IsOpen)
             {
                 throw new ValidationException($"акканут по id: {targetBankAccount.Id}, закрыт, изменения невозможны");
             }
             
-            await _accountRepository.UpdateAccountAsync(bankAccount);
-            _unitOfWork.SaveChanges();
+            await _accountRepository.UpdateAccountAsync(bankAccount, cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
         
-        public async Task CloseAccountAsync(string id)
+        public async Task CloseAccountAsync(string id, CancellationToken cancellationToken)
         {
             if (string.IsNullOrEmpty(id))
             {
                 throw new ValidationException("id не должне быть пустым");
             }
             
-            var account = await _accountRepository.GetByIdAsync(id);
-            await _closeBankAccountValidator.ValidateAndThrowAsync(account);
+            var account = await _accountRepository.GetByIdAsync(id, cancellationToken);
+            await _closeBankAccountValidator.ValidateAndThrowAsync(account, cancellationToken);
             
-            await _accountRepository.CloseAccountAsync(id);
-            _unitOfWork.SaveChanges();
+            await _accountRepository.CloseAccountAsync(id, cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task<double> CalculateCommissionAsync(MoneyTransfer moneyTransfer)
+        public async Task<double> CalculateCommissionAsync(MoneyTransfer moneyTransfer, CancellationToken cancellationToken)
         {
-            await _moneyTransferValidator.ValidateAndThrowAsync(moneyTransfer);
-            var fromAccount = await _accountRepository.GetByIdAsync(moneyTransfer.FromBankAccountId);
-            var toAccount = await _accountRepository.GetByIdAsync(moneyTransfer.ToBankAccountId);
+            await _moneyTransferValidator.ValidateAndThrowAsync(moneyTransfer, cancellationToken);
+            var fromAccount = await _accountRepository.GetByIdAsync(moneyTransfer.FromBankAccountId, cancellationToken);
+            var toAccount = await _accountRepository.GetByIdAsync(moneyTransfer.ToBankAccountId, cancellationToken);
 
             if (fromAccount.UserId == toAccount.UserId)
             {
@@ -103,12 +104,12 @@ namespace Minibank.Core.Domains.Accounts.Services
             return Math.Round(moneyTransfer.Amount * 0.02, 2);
         }
 
-        public async Task TransferAmountAsync(MoneyTransfer moneyTransfer)
+        public async Task TransferAmountAsync(MoneyTransfer moneyTransfer, CancellationToken cancellationToken)
         {
-            await _moneyTransferValidator.ValidateAndThrowAsync(moneyTransfer);
+            await _moneyTransferValidator.ValidateAndThrowAsync(moneyTransfer, cancellationToken);
             
-            var fromAccount = await _accountRepository.GetByIdAsync(moneyTransfer.FromBankAccountId);
-            var toAccount = await _accountRepository.GetByIdAsync(moneyTransfer.ToBankAccountId);
+            var fromAccount = await _accountRepository.GetByIdAsync(moneyTransfer.FromBankAccountId, cancellationToken);
+            var toAccount = await _accountRepository.GetByIdAsync(moneyTransfer.ToBankAccountId, cancellationToken);
             
             if (fromAccount.Balance < moneyTransfer.Amount)
             {
@@ -116,18 +117,18 @@ namespace Minibank.Core.Domains.Accounts.Services
             }
             
             fromAccount.Balance -= moneyTransfer.Amount;
-            moneyTransfer.Amount -= await CalculateCommissionAsync(moneyTransfer);
+            moneyTransfer.Amount -= await CalculateCommissionAsync(moneyTransfer, cancellationToken);
             var conversionAmount =
                 Math.Round(
-                    await _currencyConverter.ConvertAsync(moneyTransfer.Amount, fromAccount.Currency, toAccount.Currency),
+                    await _currencyConverter.ConvertAsync(moneyTransfer.Amount, fromAccount.Currency, toAccount.Currency, cancellationToken),
                     2);
             toAccount.Balance += conversionAmount;
             
-            await _moneyTransferRepository.CreateTransferAsync(moneyTransfer);
-            await _accountRepository.UpdateAccountAsync(fromAccount);
-            await _accountRepository.UpdateAccountAsync(toAccount);
+            await _moneyTransferRepository.CreateTransferAsync(moneyTransfer, cancellationToken);
+            await _accountRepository.UpdateAccountAsync(fromAccount, cancellationToken);
+            await _accountRepository.UpdateAccountAsync(toAccount, cancellationToken);
             
-            _unitOfWork.SaveChanges();
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
     }
 }

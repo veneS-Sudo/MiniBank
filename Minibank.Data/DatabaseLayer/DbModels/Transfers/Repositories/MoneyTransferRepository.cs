@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
@@ -23,11 +24,11 @@ namespace Minibank.Data.DatabaseLayer.DbModels.Transfers.Repositories
             _mapper = mapper;
         }
 
-        public async Task<MoneyTransfer> GetByIdAsync(string id)
+        public async Task<MoneyTransfer> GetByIdAsync(string id, CancellationToken cancellationToken)
         {
             var transferEntity = await _context.AmountTransfers
                 .AsNoTracking()
-                .FirstOrDefaultAsync(transfer => transfer.Id == id);
+                .FirstOrDefaultAsync(transfer => transfer.Id == id, cancellationToken);
             
             if (transferEntity == null)
             {
@@ -37,15 +38,15 @@ namespace Minibank.Data.DatabaseLayer.DbModels.Transfers.Repositories
             return _mapper.Map<MoneyTransfer>(transferEntity);
         }
 
-        public Task<List<MoneyTransfer>> GetAllTransfersAsync()
+        public Task<List<MoneyTransfer>> GetAllTransfersAsync(CancellationToken cancellationToken)
         {
             return _context.AmountTransfers
                 .AsNoTracking()
                 .Select(transferEntity => _mapper.Map<MoneyTransfer>(transferEntity))
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
         }
 
-        public Task CreateTransferAsync(double amount, string fromAccountId, string toAccountId, Currency currency)
+        public Task CreateTransferAsync(double amount, string fromAccountId, string toAccountId, Currency currency, CancellationToken cancellationToken)
         {
             var entity = new MoneyTransferEntity
             {
@@ -56,15 +57,15 @@ namespace Minibank.Data.DatabaseLayer.DbModels.Transfers.Repositories
                 ToBankAccountId = toAccountId
             };
             
-            return _context.AmountTransfers.AddAsync(entity).AsTask();
+            return _context.AmountTransfers.AddAsync(entity, cancellationToken).AsTask();
         }
 
-        public Task CreateTransferAsync(MoneyTransfer moneyTransfer)
+        public Task CreateTransferAsync(MoneyTransfer moneyTransfer, CancellationToken cancellationToken)
         {
             var transferEntity = _mapper.Map<MoneyTransferEntity>(moneyTransfer);
             transferEntity.Id = Guid.NewGuid().ToString();
             
-            return _context.AmountTransfers.AddAsync(transferEntity).AsTask();
+            return _context.AmountTransfers.AddAsync(transferEntity, cancellationToken).AsTask();
         }
     }
 }

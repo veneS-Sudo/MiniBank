@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Minibank.Core.Exceptions.FriendlyExceptions;
 
@@ -8,10 +9,12 @@ namespace Minibank.Core.Converters
     {
         private readonly ICurrencyRateProvider _currencyRateProvider;
 
-        public CurrencyConverter(ICurrencyRateProvider currencyRateProvider) => 
-            _currencyRateProvider = currencyRateProvider;
+        public CurrencyConverter(ICurrencyRateProvider currencyRateProvider)
+        {
+            _currencyRateProvider = currencyRateProvider;    
+        }
 
-        public async Task<double> ConvertAsync(double amount, Currency fromCurrency, Currency toCurrency)
+        public async Task<double> ConvertAsync(double amount, Currency fromCurrency, Currency toCurrency, CancellationToken cancellationToken)
         {
             if (amount < 0)
             {
@@ -26,15 +29,15 @@ namespace Minibank.Core.Converters
             // TODO Change algorithm
             if (toCurrency == Currency.RUB)
             {
-                return amount * await _currencyRateProvider.GetCurrencyRateAsync(fromCurrency);
+                return amount * await _currencyRateProvider.GetCurrencyRateAsync(fromCurrency, cancellationToken);
             }
             if (fromCurrency == Currency.RUB)
             {
-                return amount / await _currencyRateProvider.GetCurrencyRateAsync(toCurrency);
+                return amount / await _currencyRateProvider.GetCurrencyRateAsync(toCurrency, cancellationToken);
             }
             
-            return amount * await _currencyRateProvider.GetCurrencyRateAsync(fromCurrency) /
-                   await _currencyRateProvider.GetCurrencyRateAsync(toCurrency);
+            return amount * await _currencyRateProvider.GetCurrencyRateAsync(fromCurrency, cancellationToken) /
+                   await _currencyRateProvider.GetCurrencyRateAsync(toCurrency, cancellationToken);
         }
     }
 }

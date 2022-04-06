@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
@@ -22,11 +23,11 @@ namespace Minibank.Data.DatabaseLayer.DbModels.Accounts.Repositories
             _mapper = mapper;
         }
 
-        public async Task<BankAccount> GetByIdAsync(string id)
+        public async Task<BankAccount> GetByIdAsync(string id, CancellationToken cancellationToken)
         {
             var bankAccountEntity = await _context.BankAccounts
                 .AsNoTracking()
-                .FirstOrDefaultAsync(account => account.Id == id);
+                .FirstOrDefaultAsync(account => account.Id == id, cancellationToken);
             if (bankAccountEntity == null)
             {
                 throw new ObjectNotFoundException($"аккаунт с id: {id}, не найден");
@@ -35,27 +36,27 @@ namespace Minibank.Data.DatabaseLayer.DbModels.Accounts.Repositories
             return _mapper.Map<BankAccount>(bankAccountEntity);
         }
 
-        public Task<List<BankAccount>> GetAllAccountsAsync()
+        public Task<List<BankAccount>> GetAllAccountsAsync(CancellationToken cancellationToken)
         {
             return _context.BankAccounts
                 .AsNoTracking()
                 .Select(account => _mapper.Map<BankAccount>(account))
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
         }
 
-        public Task CreateAccountAsync(BankAccount bankAccount)
+        public Task CreateAccountAsync(BankAccount bankAccount, CancellationToken cancellationToken)
         {
             var bankAccountEntity = _mapper.Map<BankAccountEntity>(bankAccount);
             bankAccountEntity.Id = Guid.NewGuid().ToString();
             bankAccountEntity.IsOpen = true;
             bankAccountEntity.DateOpen = DateTime.UtcNow;
             
-            return _context.BankAccounts.AddAsync(bankAccountEntity).AsTask();
+            return _context.BankAccounts.AddAsync(bankAccountEntity, cancellationToken).AsTask();
         }
 
-        public async Task UpdateAccountAsync(BankAccount bankAccount)
+        public async Task UpdateAccountAsync(BankAccount bankAccount, CancellationToken cancellationToken)
         {
-            var targetAccount = await _context.BankAccounts.FindAsync(bankAccount.Id);
+            var targetAccount = await _context.BankAccounts.FindAsync( new object[] { bankAccount.Id }, cancellationToken);
 
             if (targetAccount == null)
             {
@@ -65,16 +66,16 @@ namespace Minibank.Data.DatabaseLayer.DbModels.Accounts.Repositories
             targetAccount.Balance = bankAccount.Balance;
         }
 
-        public Task<bool> ExistsByUserIdAsync(string userId)
+        public Task<bool> ExistsByUserIdAsync(string userId, CancellationToken cancellationToken)
         {
             return _context.BankAccounts
                 .AsNoTracking()
-                .AnyAsync(account => account.UserId == userId);
+                .AnyAsync(account => account.UserId == userId, cancellationToken);
         }
 
-        public async Task CloseAccountAsync(string id)
+        public async Task CloseAccountAsync(string id, CancellationToken cancellationToken)
         {
-            var bankAccountEntity = await _context.BankAccounts.FindAsync(id);
+            var bankAccountEntity = await _context.BankAccounts.FindAsync(new object[] { id }, cancellationToken);
             if (bankAccountEntity == null)
             {
                 throw new ObjectNotFoundException($"аккаунт с id: {id}, не найден");
@@ -84,11 +85,11 @@ namespace Minibank.Data.DatabaseLayer.DbModels.Accounts.Repositories
             bankAccountEntity.DateClose = DateTime.UtcNow;
         }
 
-        public async Task<bool> BankAccountIsOpenAsync(string id)
+        public async Task<bool> BankAccountIsOpenAsync(string id, CancellationToken cancellationToken)
         {
             var bankAccountEntity = await _context.BankAccounts
                 .AsNoTracking()
-                .FirstOrDefaultAsync(account => account.Id == id);
+                .FirstOrDefaultAsync(account => account.Id == id, cancellationToken);
             if (bankAccountEntity == null)
             {
                 throw new ObjectNotFoundException($"аккаунт с id: {id}, не найден");

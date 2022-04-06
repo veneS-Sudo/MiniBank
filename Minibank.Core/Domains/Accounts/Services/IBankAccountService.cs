@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Minibank.Core.Converters;
 using Minibank.Core.Domains.Transfers;
@@ -8,12 +9,12 @@ namespace Minibank.Core.Domains.Accounts.Services
 {
     public interface IBankAccountService
     {
-        Task<BankAccount> GetByIdAsync(string id);
-        Task<List<BankAccount>> GetAllAccountsAsync();
-        Task CreateAccountAsync(BankAccount bankAccount);
-        Task UpdateAccountAsync(BankAccount bankAccount);
-        Task CloseAccountAsync(string id);
-        Task<double> CalculateCommissionAsync(MoneyTransfer moneyTransfer);
-        Task TransferAmountAsync(MoneyTransfer moneyTransfer);
+        Task<BankAccount> GetByIdAsync(string id, CancellationToken cancellationToken);
+        Task<List<BankAccount>> GetAllAccountsAsync(CancellationToken cancellationToken);
+        Task CreateAccountAsync(BankAccount bankAccount, CancellationToken cancellationToken);
+        Task UpdateAccountAsync(BankAccount bankAccount, CancellationToken cancellationToken);
+        Task CloseAccountAsync(string id, CancellationToken cancellationToken);
+        Task<double> CalculateCommissionAsync(MoneyTransfer moneyTransfer, CancellationToken cancellationToken);
+        Task TransferAmountAsync(MoneyTransfer moneyTransfer, CancellationToken cancellationToken);
     }
 }

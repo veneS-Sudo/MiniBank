@@ -13,7 +13,7 @@ namespace Minibank.Core.Domains.Accounts.Validators
             RuleFor(account => account.UserId).NotEmpty().WithMessage(
                 "id пользователя, для которого требуется создать банковский, не должен быть пустым");
             RuleFor(account => account.UserId)
-                .MustAsync((userId, _) => userRepository.ExistsAsync(userId))
+                .MustAsync(userRepository.ExistsAsync)
                 .WithMessage(account =>  $"невозможно создать аккунт для пользователя c id:{account.UserId}");
             RuleFor(account => account.Currency).IsInEnum().WithMessage("неверный тип валюты");
         }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentValidation;
 using Minibank.Core.Domains.Accounts.Repositories;
@@ -24,53 +25,53 @@ namespace Minibank.Core.Domains.Users.Services
             _userValidator = userValidator;
         }
         
-        public Task<User> GetByIdAsync(string id)
+        public Task<User> GetByIdAsync(string id, CancellationToken cancellationToken)
         {
             if (string.IsNullOrEmpty(id))
             {
                 throw new ValidationException("Id не должен быть пустым");
             }
             
-            return _userRepository.GetByIdAsync(id);
+            return _userRepository.GetByIdAsync(id, cancellationToken);
         }
 
-        public Task<List<User>> GetAllUsersAsync()
+        public Task<List<User>> GetAllUsersAsync(CancellationToken cancellationToken)
         {
-            return _userRepository.GetAllUsersAsync();
+            return _userRepository.GetAllUsersAsync(cancellationToken);
         }
 
-        public async Task CreateUserAsync(User user)
+        public async Task CreateUserAsync(User user, CancellationToken cancellationToken)
         {
-            await _userValidator.ValidateAndThrowAsync(user);
-            await _userRepository.CreateUserAsync(user);
-            _unitOfWork.SaveChanges();
+            await _userValidator.ValidateAndThrowAsync(user, cancellationToken);
+            await _userRepository.CreateUserAsync(user, cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task UpdateUserAsync(User user)
+        public async Task UpdateUserAsync(User user, CancellationToken cancellationToken)
         {
             if (string.IsNullOrEmpty(user.Id))
             {
                 throw new ValidationException("Для обновления данных пользователя необходим непустой id");
             }
             
-            await _userValidator.ValidateAndThrowAsync(user);
-            await _userRepository.UpdateUserAsync(user);
-            _unitOfWork.SaveChanges();
+            await _userValidator.ValidateAndThrowAsync(user, cancellationToken);
+            await _userRepository.UpdateUserAsync(user, cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task DeleteUserAsync(string id)
+        public async Task DeleteUserAsync(string id, CancellationToken cancellationToken)
         {
             if (string.IsNullOrEmpty(id))
             {
                 throw new ValidationException("Id не должен быть пустым");
             }
-            if (await _accountRepository.ExistsByUserIdAsync(id))
+            if (await _accountRepository.ExistsByUserIdAsync(id, cancellationToken))
             {
                 throw new ValidationException($"Невозможно удалить пользователя по id:{id}, так как у него есть аккаунт(ы)");
             }
             
-            await _userRepository.DeleteUserAsync(id);
-            _unitOfWork.SaveChanges();
+            await _userRepository.DeleteUserAsync(id, cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
     }
 }

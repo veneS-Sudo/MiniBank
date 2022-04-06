@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using Minibank.Core.Domains.Dal;
 
 namespace Minibank.Data.DatabaseLayer.Context
@@ -17,9 +18,9 @@ namespace Minibank.Data.DatabaseLayer.Context
             return _context.SaveChanges();
         }
 
-        public Task<int> SaveChangesAsync()
+        public Task<int> SaveChangesAsync(CancellationToken cancellationToken)
         {
-            return _context.SaveChangesAsync();
+            return _context.SaveChangesAsync(cancellationToken);
         }
     }
 }
