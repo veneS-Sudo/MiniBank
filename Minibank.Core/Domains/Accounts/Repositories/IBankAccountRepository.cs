@@ -10,10 +10,10 @@ namespace Minibank.Core.Domains.Accounts.Repositories
     {
         Task<BankAccount> GetByIdAsync(string id, CancellationToken cancellationToken);
         Task<List<BankAccount>> GetAllAccountsAsync(CancellationToken cancellationToken);
-        Task CreateAccountAsync(BankAccount bankAccount, CancellationToken cancellationToken);
-        Task UpdateAccountAsync(BankAccount bankAccount, CancellationToken cancellationToken);
+        Task<BankAccount> CreateAccountAsync(BankAccount bankAccount, CancellationToken cancellationToken);
+        Task<BankAccount> UpdateAccountAsync(BankAccount bankAccount, CancellationToken cancellationToken);
         Task<bool> ExistsByUserIdAsync(string userId, CancellationToken cancellationToken);
-        Task CloseAccountAsync(string id, CancellationToken cancellationToken);
+        Task<bool> CloseAccountAsync(string id, CancellationToken cancellationToken);
         Task<bool> BankAccountIsOpenAsync(string id, CancellationToken cancellationToken);
     }
 }

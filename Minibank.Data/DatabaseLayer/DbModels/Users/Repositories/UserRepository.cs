@@ -36,24 +36,25 @@ namespace Minibank.Data.DatabaseLayer.DbModels.Users.Repositories
             return _mapper.Map<User>(userEntity);
         }
 
-        public Task<List<User>> GetAllUsersAsync(CancellationToken cancellationToken)
+        public async Task<List<User>> GetAllUsersAsync(CancellationToken cancellationToken)
         {
-            return
-                _context.Users
+            return await _context.Users
                     .AsNoTracking()
                     .Select(userEntity => _mapper.Map<User>(userEntity))
                     .ToListAsync(cancellationToken);
         }
 
-        public Task CreateUserAsync(User user, CancellationToken cancellationToken)
+        public async Task<User> CreateUserAsync(User user, CancellationToken cancellationToken)
         {
             var userEntity = _mapper.Map<UserEntity>(user);
             userEntity.Id = Guid.NewGuid().ToString();
             
-            return _context.Users.AddAsync(userEntity, cancellationToken).AsTask();
+            var createUser = await _context.Users.AddAsync(userEntity, cancellationToken);
+            
+            return _mapper.Map<User>(createUser.Entity);
         }
 
-        public async Task UpdateUserAsync(User user, CancellationToken cancellationToken)
+        public async Task<User> UpdateUserAsync(User user, CancellationToken cancellationToken)
         {
             var userEntity = await _context.Users.FindAsync(new object[] { user.Id }, cancellationToken);
             if (userEntity == null)
@@ -63,9 +64,11 @@ namespace Minibank.Data.DatabaseLayer.DbModels.Users.Repositories
             
             userEntity.Login = user.Login;
             userEntity.Email = user.Email;
+
+            return _mapper.Map<User>(userEntity);
         }
 
-        public async Task DeleteUserAsync(string id, CancellationToken cancellationToken)
+        public async Task<bool> DeleteUserAsync(string id, CancellationToken cancellationToken)
         {
             var userEntity = await _context.Users.FindAsync(new object[] {id}, cancellationToken);
             if (userEntity == null)
@@ -73,12 +76,13 @@ namespace Minibank.Data.DatabaseLayer.DbModels.Users.Repositories
                 throw new ObjectNotFoundException($"не существует пользователя c id: {id}");
             }
             
-            _context.Users.Remove(userEntity);
+            var deleteUser = _context.Users.Remove(userEntity);
+            return deleteUser.State == EntityState.Deleted;
         }
 
-        public Task<bool> ExistsAsync(string id, CancellationToken cancellationToken)
+        public async Task<bool> ExistsAsync(string id, CancellationToken cancellationToken)
         {
-            return _context.Users
+            return await _context.Users
                 .AsNoTracking()
                 .AnyAsync(userEntity => userEntity.Id == id, cancellationToken);
         }

@@ -10,7 +10,7 @@ namespace Minibank.Data.DatabaseLayer.DbModels.Transfers
     public class MoneyTransferEntity
     {
         public string Id { get; set; }
-        public double Amount { get; set; }
+        public decimal Amount { get; set; }
         public Currency Currency { get; set; }
         public string FromBankAccountId { get; set; }
         public string ToBankAccountId { get; set; }
@@ -25,15 +25,15 @@ namespace Minibank.Data.DatabaseLayer.DbModels.Transfers
             {
                 builder.ToTable("money_transfer");
 
-                builder.Property(entity => entity.Id).HasColumnName("id");
-                builder.Property(entity => entity.Amount).IsRequired().HasColumnName("amount");
+                builder.Property(entity => entity.Id);
+                builder.Property(entity => entity.Amount).IsRequired();
                 builder.Property(entity => entity.Currency).HasConversion(
                     new ValueConverter<Currency, string>(
                         x => x.ToString(),
                         y => Enum.Parse<Currency>(y)
-                        )).IsRequired().HasColumnName("currency");
-                builder.Property(entity => entity.FromBankAccountId).IsRequired().HasColumnName("from_bank_account_id");
-                builder.Property(entity => entity.ToBankAccountId).IsRequired().HasColumnName("to_bank_account_id");
+                        )).IsRequired();
+                builder.Property(entity => entity.FromBankAccountId).IsRequired();
+                builder.Property(entity => entity.ToBankAccountId).IsRequired();
 
                 builder.HasKey(entity => entity.Id);
                 

@@ -38,15 +38,15 @@ namespace Minibank.Data.DatabaseLayer.DbModels.Transfers.Repositories
             return _mapper.Map<MoneyTransfer>(transferEntity);
         }
 
-        public Task<List<MoneyTransfer>> GetAllTransfersAsync(CancellationToken cancellationToken)
+        public async Task<List<MoneyTransfer>> GetAllTransfersAsync(CancellationToken cancellationToken)
         {
-            return _context.AmountTransfers
+            return await _context.AmountTransfers
                 .AsNoTracking()
                 .Select(transferEntity => _mapper.Map<MoneyTransfer>(transferEntity))
                 .ToListAsync(cancellationToken);
         }
 
-        public Task CreateTransferAsync(double amount, string fromAccountId, string toAccountId, Currency currency, CancellationToken cancellationToken)
+        public async Task<MoneyTransfer> CreateTransferAsync(decimal amount, string fromAccountId, string toAccountId, Currency currency, CancellationToken cancellationToken)
         {
             var entity = new MoneyTransferEntity
             {
@@ -56,16 +56,20 @@ namespace Minibank.Data.DatabaseLayer.DbModels.Transfers.Repositories
                 FromBankAccountId = fromAccountId,
                 ToBankAccountId = toAccountId
             };
+
+            var createMoneyTransfer = await _context.AmountTransfers.AddAsync(entity, cancellationToken);
             
-            return _context.AmountTransfers.AddAsync(entity, cancellationToken).AsTask();
+            return _mapper.Map<MoneyTransfer>(createMoneyTransfer.Entity);
         }
 
-        public Task CreateTransferAsync(MoneyTransfer moneyTransfer, CancellationToken cancellationToken)
+        public async Task<MoneyTransfer> CreateTransferAsync(MoneyTransfer moneyTransfer, CancellationToken cancellationToken)
         {
             var transferEntity = _mapper.Map<MoneyTransferEntity>(moneyTransfer);
             transferEntity.Id = Guid.NewGuid().ToString();
+
+            var createMoneyTransfer = await _context.AmountTransfers.AddAsync(transferEntity, cancellationToken);
             
-            return _context.AmountTransfers.AddAsync(transferEntity, cancellationToken).AsTask();
+            return _mapper.Map<MoneyTransfer>(createMoneyTransfer.Entity);
         }
     }
 }

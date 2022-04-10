@@ -15,7 +15,7 @@ namespace Minibank.Core
             services.AddScoped<IUserService,UserService>();
             services.AddScoped<IBankAccountService, BankAccountService>();
 
-            services.AddFluentValidation().AddValidatorsFromAssembly(typeof(UserService).Assembly);
+            services.AddFluentValidation().AddValidatorsFromAssembly(typeof(IUserService).Assembly);
             return services;
         }
     }

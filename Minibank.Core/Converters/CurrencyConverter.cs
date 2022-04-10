@@ -14,11 +14,11 @@ namespace Minibank.Core.Converters
             _currencyRateProvider = currencyRateProvider;    
         }
 
-        public async Task<double> ConvertAsync(double amount, Currency fromCurrency, Currency toCurrency, CancellationToken cancellationToken)
+        public async Task<decimal> ConvertAsync(decimal amount, Currency fromCurrency, Currency toCurrency, CancellationToken cancellationToken)
         {
             if (amount < 0)
             {
-                throw new ValidationException("Сумма первода не может быть отрицательной!");
+                throw new ValidationException("Сумма перевода не может быть отрицательной!");
             }
 
             if (fromCurrency == toCurrency)
@@ -26,18 +26,10 @@ namespace Minibank.Core.Converters
                 return amount;
             }
 
-            // TODO Change algorithm
-            if (toCurrency == Currency.RUB)
-            {
-                return amount * await _currencyRateProvider.GetCurrencyRateAsync(fromCurrency, cancellationToken);
-            }
-            if (fromCurrency == Currency.RUB)
-            {
-                return amount / await _currencyRateProvider.GetCurrencyRateAsync(toCurrency, cancellationToken);
-            }
+            var rateFromCurrency = await _currencyRateProvider.GetCurrencyRateAsync(fromCurrency, cancellationToken);
+            var rateToCurrency = await _currencyRateProvider.GetCurrencyRateAsync(toCurrency, cancellationToken); 
             
-            return amount * await _currencyRateProvider.GetCurrencyRateAsync(fromCurrency, cancellationToken) /
-                   await _currencyRateProvider.GetCurrencyRateAsync(toCurrency, cancellationToken);
+            return amount * rateFromCurrency / rateToCurrency;
         }
     }
 }

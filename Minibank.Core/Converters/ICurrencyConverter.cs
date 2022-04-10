@@ -5,6 +5,6 @@ namespace Minibank.Core.Converters
 {
     public interface ICurrencyConverter
     {
-        Task<double> ConvertAsync(double amount, Currency fromCurrency, Currency toCurrency, CancellationToken cancellationToken);
+        Task<decimal> ConvertAsync(decimal amount, Currency fromCurrency, Currency toCurrency, CancellationToken cancellationToken);
     }
 }

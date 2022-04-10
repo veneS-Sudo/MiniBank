@@ -13,7 +13,7 @@ namespace Minibank.Data.DatabaseLayer.DbModels.Accounts
     {
         public string Id { get; set; }
         public string UserId { get; set; }
-        public double Balance { get; set; }
+        public decimal Balance { get; set; }
         public Currency Currency { get; set; }
         public bool IsOpen { get; set; }
         public DateTime DateOpen { get; set; }
@@ -30,17 +30,17 @@ namespace Minibank.Data.DatabaseLayer.DbModels.Accounts
             {
                 builder.ToTable("bank_account");
 
-                builder.Property(entity => entity.Id).HasColumnName("id");
-                builder.Property(entity => entity.Balance).HasDefaultValue(0).HasColumnName("balance");
-                builder.Property(entity => entity.UserId).IsRequired().HasColumnName("user_id");
+                builder.Property(entity => entity.Id);
+                builder.Property(entity => entity.Balance).HasDefaultValue(0);
+                builder.Property(entity => entity.UserId).IsRequired();
                 builder.Property(entity => entity.Currency).HasConversion(
                     new ValueConverter<Currency, string>(
                         x => x.ToString(),
                         y => Enum.Parse<Currency>(y)
-                        )).IsRequired().HasColumnName("currency");
-                builder.Property(entity => entity.IsOpen).HasDefaultValue(true).HasColumnName("is_open");
-                builder.Property(entity => entity.DateOpen).IsRequired().HasColumnName("date_open");
-                builder.Property(entity => entity.DateClose).HasColumnName("date_close");
+                        )).IsRequired();
+                builder.Property(entity => entity.IsOpen).HasDefaultValue(true);
+                builder.Property(entity => entity.DateOpen).IsRequired();
+                builder.Property(entity => entity.DateClose);
 
                 builder.HasKey(entity => entity.Id);
                 

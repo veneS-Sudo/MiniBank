@@ -11,10 +11,10 @@ namespace Minibank.Core.Domains.Accounts.Services
     {
         Task<BankAccount> GetByIdAsync(string id, CancellationToken cancellationToken);
         Task<List<BankAccount>> GetAllAccountsAsync(CancellationToken cancellationToken);
-        Task CreateAccountAsync(BankAccount bankAccount, CancellationToken cancellationToken);
-        Task UpdateAccountAsync(BankAccount bankAccount, CancellationToken cancellationToken);
-        Task CloseAccountAsync(string id, CancellationToken cancellationToken);
-        Task<double> CalculateCommissionAsync(MoneyTransfer moneyTransfer, CancellationToken cancellationToken);
-        Task TransferAmountAsync(MoneyTransfer moneyTransfer, CancellationToken cancellationToken);
+        Task<BankAccount> CreateAccountAsync(BankAccount bankAccount, CancellationToken cancellationToken);
+        Task<BankAccount> UpdateAccountAsync(BankAccount bankAccount, CancellationToken cancellationToken);
+        Task<bool> CloseAccountAsync(string id, CancellationToken cancellationToken);
+        Task<decimal> CalculateCommissionAsync(MoneyTransfer moneyTransfer, CancellationToken cancellationToken);
+        Task<MoneyTransfer> TransferAmountAsync(MoneyTransfer moneyTransfer, CancellationToken cancellationToken);
     }
 }

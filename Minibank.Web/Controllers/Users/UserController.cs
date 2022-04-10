@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Minibank.Core.Domains.Accounts;
 using Minibank.Core.Domains.Users;
 using Minibank.Core.Domains.Users.Services;
 using Minibank.Web.Controllers.Users.Dto;
@@ -35,30 +36,29 @@ namespace Minibank.Web.Controllers.Users
         {
             var users = await _userService.GetAllUsersAsync(cancellationToken);
                 
-            return users.Select(entity => _mapper.Map<GetUserDto>(entity))
-                .ToList();
+            return _mapper.Map<List<User>, List<GetUserDto>>(users);
         }
 
         [HttpPost("CreateUser")]
-        public Task CreateUser(CreateUserDto user, CancellationToken cancellationToken)
+        public async Task CreateUser(CreateUserDto user, CancellationToken cancellationToken)
         {
             var targetUser = _mapper.Map<User>(user);
-            return _userService.CreateUserAsync(targetUser, cancellationToken);
+            await _userService.CreateUserAsync(targetUser, cancellationToken);
         }
 
         [HttpPut("UpdateUser/{userId}")]
-        public Task UpdateUser(string userId, UpdateUserDto user, CancellationToken cancellationToken)
+        public async Task UpdateUser(string userId, UpdateUserDto user, CancellationToken cancellationToken)
         {
             var targetUser = _mapper.Map<User>(user);
             targetUser.Id = userId;
             
-            return _userService.UpdateUserAsync(targetUser, cancellationToken);
+            await _userService.UpdateUserAsync(targetUser, cancellationToken);
         }
 
         [HttpDelete("DeleteUser")]
-        public Task DeleteUser(string userId, CancellationToken cancellationToken)
+        public async Task DeleteUser(string userId, CancellationToken cancellationToken)
         {
-            return _userService.DeleteUserAsync(userId, cancellationToken);
+            await _userService.DeleteUserAsync(userId, cancellationToken);
         }
     }
 }

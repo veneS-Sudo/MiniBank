@@ -10,7 +10,7 @@ namespace Minibank.Core.Domains.Transfers.Repositories
     {
         Task<MoneyTransfer> GetByIdAsync(string id, CancellationToken cancellationToken);
         Task<List<MoneyTransfer>> GetAllTransfersAsync(CancellationToken cancellationToken);
-        Task CreateTransferAsync(double amount, string fromAccountId, string toAccountId, Currency currency, CancellationToken cancellationToken);
-        Task CreateTransferAsync(MoneyTransfer moneyTransfer, CancellationToken cancellationToken);
+        Task<MoneyTransfer> CreateTransferAsync(decimal amount, string fromAccountId, string toAccountId, Currency currency, CancellationToken cancellationToken);
+        Task<MoneyTransfer> CreateTransferAsync(MoneyTransfer moneyTransfer, CancellationToken cancellationToken);
     }
 }

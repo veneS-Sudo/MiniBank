@@ -16,8 +16,13 @@ namespace Minibank.Data.Providers.CurrencyProviders
             _httpClient = httpClient;
         }
         
-        public async Task<double> GetCurrencyRateAsync(Currency currency, CancellationToken cancellationToken)
+        public async Task<decimal> GetCurrencyRateAsync(Currency currency, CancellationToken cancellationToken)
         {
+            if (currency == Currency.RUB)
+            {
+                return 1;
+            }
+            
             var response = await _httpClient.GetFromJsonAsync<CourseResponse>("daily_json.js", cancellationToken);
     
             return response.Valute[currency.ToString()].Value;

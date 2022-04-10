@@ -18,7 +18,7 @@ namespace Minibank.Web.Controllers.Converters
         }
 
         [HttpGet]
-        public async Task<double> Get(int amount, string fromCurrency, string toCurrency, CancellationToken cancellationToken)
+        public async Task<decimal> Get(decimal amount, string fromCurrency, string toCurrency, CancellationToken cancellationToken)
         {
             return Math.Round( 
                 await _currencyConverter.ConvertAsync(amount,

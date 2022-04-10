@@ -21,12 +21,14 @@ namespace Minibank.Core.Domains.Accounts.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly CreateBankAccountValidator _createBankAccountValidator;
         private readonly CloseBankAccountValidator _closeBankAccountValidator;
+        private readonly UpdateBankAccountValidator _updateBankAccountValidator;
         private readonly IValidator<MoneyTransfer> _moneyTransferValidator;
+        private readonly IValidator<string> _idValidator;
 
         public BankAccountService(IBankAccountRepository accountRepository, ICurrencyConverter currencyConverter,
             IMoneyTransferRepository moneyTransferRepository, IUnitOfWork unitOfWork,
             CreateBankAccountValidator createBankAccountValidator, CloseBankAccountValidator closeBankAccountValidator,
-            IValidator<MoneyTransfer> moneyTransferValidator)
+            IValidator<MoneyTransfer> moneyTransferValidator, IValidator<string> idValidator, UpdateBankAccountValidator updateBankAccountValidator)
         {
             _accountRepository = accountRepository;
             _currencyConverter = currencyConverter;
@@ -35,62 +37,53 @@ namespace Minibank.Core.Domains.Accounts.Services
             _createBankAccountValidator = createBankAccountValidator;
             _closeBankAccountValidator = closeBankAccountValidator;
             _moneyTransferValidator = moneyTransferValidator;
+            _idValidator = idValidator;
+            _updateBankAccountValidator = updateBankAccountValidator;
         }
 
-        public Task<BankAccount> GetByIdAsync(string id, CancellationToken cancellationToken)
+        public async Task<BankAccount> GetByIdAsync(string id, CancellationToken cancellationToken)
         {
-            if (string.IsNullOrEmpty(id))
-            {
-                throw new ValidationException("id не должне быть пустым");
-            }
-            
-            return _accountRepository.GetByIdAsync(id, cancellationToken);
+            await _idValidator.ValidateAndThrowAsync(id, cancellationToken);
+            return await _accountRepository.GetByIdAsync(id, cancellationToken);
         }
 
-        public Task<List<BankAccount>> GetAllAccountsAsync(CancellationToken cancellationToken)
+        public async Task<List<BankAccount>> GetAllAccountsAsync(CancellationToken cancellationToken)
         {
-            return _accountRepository.GetAllAccountsAsync(cancellationToken);
+            return await _accountRepository.GetAllAccountsAsync(cancellationToken);
         }
 
-        public async Task CreateAccountAsync(BankAccount bankAccount, CancellationToken cancellationToken)
+        public async Task<BankAccount> CreateAccountAsync(BankAccount bankAccount, CancellationToken cancellationToken)
         {
             await _createBankAccountValidator.ValidateAndThrowAsync(bankAccount, cancellationToken);
-            await _accountRepository.CreateAccountAsync(bankAccount, cancellationToken);
+            var createBankAccount = await _accountRepository.CreateAccountAsync(bankAccount, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
+            return createBankAccount;
         }
 
-        public async Task UpdateAccountAsync(BankAccount bankAccount, CancellationToken cancellationToken)
+        public async Task<BankAccount> UpdateAccountAsync(BankAccount bankAccount, CancellationToken cancellationToken)
         {
-            if (string.IsNullOrEmpty(bankAccount.Id))
-            {
-                throw new ValidationException("id не должне быть пустым");
-            }
+            await _idValidator.ValidateAndThrowAsync(bankAccount.Id, cancellationToken);
+            await _updateBankAccountValidator.ValidateAndThrowAsync(bankAccount, cancellationToken);
             
-            var targetBankAccount = await _accountRepository.GetByIdAsync(bankAccount.Id, cancellationToken);
-            if (!targetBankAccount.IsOpen)
-            {
-                throw new ValidationException($"акканут по id: {targetBankAccount.Id}, закрыт, изменения невозможны");
-            }
-            
-            await _accountRepository.UpdateAccountAsync(bankAccount, cancellationToken);
+            var updateBankAccount =  await _accountRepository.UpdateAccountAsync(bankAccount, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
+            return updateBankAccount;
         }
         
-        public async Task CloseAccountAsync(string id, CancellationToken cancellationToken)
+        public async Task<bool> CloseAccountAsync(string id, CancellationToken cancellationToken)
         {
-            if (string.IsNullOrEmpty(id))
-            {
-                throw new ValidationException("id не должне быть пустым");
-            }
+            await _idValidator.ValidateAndThrowAsync(id, cancellationToken);
             
             var account = await _accountRepository.GetByIdAsync(id, cancellationToken);
             await _closeBankAccountValidator.ValidateAndThrowAsync(account, cancellationToken);
             
-            await _accountRepository.CloseAccountAsync(id, cancellationToken);
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            var isClose = await _accountRepository.CloseAccountAsync(id, cancellationToken);
+            var countEntries = await _unitOfWork.SaveChangesAsync(cancellationToken);
+            
+            return isClose && countEntries > 0;
         }
 
-        public async Task<double> CalculateCommissionAsync(MoneyTransfer moneyTransfer, CancellationToken cancellationToken)
+        public async Task<decimal> CalculateCommissionAsync(MoneyTransfer moneyTransfer, CancellationToken cancellationToken)
         {
             await _moneyTransferValidator.ValidateAndThrowAsync(moneyTransfer, cancellationToken);
             var fromAccount = await _accountRepository.GetByIdAsync(moneyTransfer.FromBankAccountId, cancellationToken);
@@ -98,16 +91,15 @@ namespace Minibank.Core.Domains.Accounts.Services
 
             if (fromAccount.UserId == toAccount.UserId)
             {
-                return 0;
+                return 0m;
             }
 
-            return Math.Round(moneyTransfer.Amount * 0.02, 2);
+            return Math.Round(moneyTransfer.Amount * 0.02m, 2);
         }
 
-        public async Task TransferAmountAsync(MoneyTransfer moneyTransfer, CancellationToken cancellationToken)
+        public async Task<MoneyTransfer> TransferAmountAsync(MoneyTransfer moneyTransfer, CancellationToken cancellationToken)
         {
             await _moneyTransferValidator.ValidateAndThrowAsync(moneyTransfer, cancellationToken);
-            
             var fromAccount = await _accountRepository.GetByIdAsync(moneyTransfer.FromBankAccountId, cancellationToken);
             var toAccount = await _accountRepository.GetByIdAsync(moneyTransfer.ToBankAccountId, cancellationToken);
             
@@ -124,11 +116,12 @@ namespace Minibank.Core.Domains.Accounts.Services
                     2);
             toAccount.Balance += conversionAmount;
             
-            await _moneyTransferRepository.CreateTransferAsync(moneyTransfer, cancellationToken);
+            var createMoneyTransfer = await _moneyTransferRepository.CreateTransferAsync(moneyTransfer, cancellationToken);
             await _accountRepository.UpdateAccountAsync(fromAccount, cancellationToken);
             await _accountRepository.UpdateAccountAsync(toAccount, cancellationToken);
             
             await _unitOfWork.SaveChangesAsync(cancellationToken);
+            return createMoneyTransfer;
         }
     }
 }

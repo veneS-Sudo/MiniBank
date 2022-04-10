@@ -8,10 +8,10 @@ namespace Minibank.Core.Domains.Transfers.Validators
         public MoneyTransferValidator(IBankAccountRepository bankAccountRepository)
         {
             RuleFor(transfer => transfer.FromBankAccountId).NotEmpty().WithMessage(
-                "id отправителя при переводе не должно быть пустым");
+                "id отправителя при переводе не должен быть пустым");
             
             RuleFor(transfer => transfer).Must((transfer, _) => transfer.FromBankAccountId != transfer.ToBankAccountId)
-                .WithMessage(transfer => $"не возможно совершить перевод между одним и тем же аккаунтом, id: {transfer.FromBankAccountId}");
+                .WithMessage(transfer => $"невозможно совершить перевод между одним и тем же аккаунтом, id: {transfer.FromBankAccountId}");
             
             RuleFor(transfer => transfer.Amount).GreaterThan(0).WithMessage("Сумма первода должна быть положительной");
             
@@ -19,7 +19,7 @@ namespace Minibank.Core.Domains.Transfers.Validators
                 .WithMessage(transfer => $"акканут отправителя по id: {transfer.FromBankAccountId} закрыт, перевод и вычисление комиссии невозможен");
             
             RuleFor(transfer => transfer.ToBankAccountId).NotEmpty().WithMessage(
-                "id получателя при переводе не должно быть пустым");
+                "id получателя при переводе не должен быть пустым");
             
             RuleFor(transfer => transfer.ToBankAccountId).MustAsync(bankAccountRepository.BankAccountIsOpenAsync)
                 .WithMessage(transfer => $"акканут получателя по id: {transfer.ToBankAccountId} закрыт, перевод и вычисление комиссии невозможен");

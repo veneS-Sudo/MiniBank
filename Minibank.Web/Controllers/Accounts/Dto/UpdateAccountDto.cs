@@ -4,6 +4,6 @@ namespace Minibank.Web.Controllers.Accounts.Dto
 {
     public class UpdateAccountDto
     {
-        public double Balance { get; set; }
+        public decimal Balance { get; set; }
     }
 }

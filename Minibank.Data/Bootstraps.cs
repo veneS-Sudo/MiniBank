@@ -31,7 +31,7 @@ namespace Minibank.Data
                     option.UseNpgsql(configuration.GetConnectionString("DefaultConnection"),
                         npgsqlOptions => npgsqlOptions.MigrationsAssembly(typeof(MinibankContext).Assembly.FullName)));
             services.AddScoped<IUnitOfWork, UnitOfWork>();
-            
+
             return services;
         }
     }

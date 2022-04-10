@@ -18,9 +18,9 @@ namespace Minibank.Data.DatabaseLayer.DbModels.Users
             {
                 builder.ToTable("user");
                 
-                builder.Property(entity => entity.Id).HasColumnName("id");
-                builder.Property(entity => entity.Login).IsRequired().HasColumnName("login");
-                builder.Property(entity => entity.Email).IsRequired().HasColumnName("email");
+                builder.Property(entity => entity.Id);
+                builder.Property(entity => entity.Login).IsRequired();
+                builder.Property(entity => entity.Email).IsRequired();
                 
                 builder.HasKey(entity => entity.Id);
             }

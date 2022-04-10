@@ -2,7 +2,7 @@
 {
     public class CreateMoneyTransferDto
     {
-        public double Amount { get; set; }
+        public decimal Amount { get; set; }
         public string FromBankAccountId { get; set; }
         public string ToBankAccountId { get; set; }
     }

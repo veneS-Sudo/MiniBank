@@ -5,7 +5,7 @@ namespace Minibank.Web.Controllers.Accounts.Dto
 {
     public class GetBankAccountDto
     {
-        public double Balance { get; set; }
+        public decimal Balance { get; set; }
         public Currency Currency { get; set; }
         public bool IsOpen { get; set; }
     }
