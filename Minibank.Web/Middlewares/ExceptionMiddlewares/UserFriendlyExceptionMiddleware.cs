@@ -1,12 +1,8 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Net;
-using System.Runtime.Serialization;
-using System.Text.Json;
 using System.Threading.Tasks;
-using System.Xml;
+using FluentValidation;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Json;
 using Minibank.Core.Exceptions.FriendlyExceptions;
 
 namespace Minibank.Web.Middlewares.ExceptionMiddlewares
@@ -26,7 +22,7 @@ namespace Minibank.Web.Middlewares.ExceptionMiddlewares
             {
                 await _next(context);
             }
-            catch (ValidationException validationException)
+            catch (ParametersValidationException validationException)
             {
                 context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 await context.Response.WriteAsJsonAsync(validationException.Message);
@@ -36,7 +32,7 @@ namespace Minibank.Web.Middlewares.ExceptionMiddlewares
                 context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 await context.Response.WriteAsJsonAsync(objectNotFoundException.Message);
             }
-            catch (FluentValidation.ValidationException exception)
+            catch (ValidationException exception)
             {
                 context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 var errors = exception.Errors

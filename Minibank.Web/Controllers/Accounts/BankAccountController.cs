@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -25,50 +24,53 @@ namespace Minibank.Web.Controllers.Accounts
             _mapper = mapper;
         }
 
-        [HttpGet("GetAccount/{id}")]
-        public async Task<GetBankAccountDto> GetAccountById(string id, CancellationToken cancellationToken)
+        [HttpGet("[action]")]
+        public async Task<GetBankAccountDto> GetAccountById(string accountId, CancellationToken cancellationToken)
         {
-            var account = await _accountService.GetByIdAsync(id, cancellationToken);
+            var account = await _accountService.GetByIdAsync(accountId, cancellationToken);
             return _mapper.Map<GetBankAccountDto>(account);
         }
 
-        [HttpGet("GetAccounts")]
+        [HttpGet("[action]")]
         public async Task<List<GetBankAccountDto>> GetAllAccount(CancellationToken cancellationToken)
         {
             var bankAccounts = await _accountService.GetAllAccountsAsync(cancellationToken);
             return _mapper.Map<List<BankAccount>, List<GetBankAccountDto>>(bankAccounts);
         }
 
-        [HttpPost("/CreateTransfer")]
-        public async Task TransferAmount(CreateMoneyTransferDto amountMoneyTransfer, CancellationToken cancellationToken)
+        [HttpPost("[action]")]
+        public async Task<string> TransferAmount(CreateMoneyTransferDto amountMoneyTransfer, CancellationToken cancellationToken)
         {
             var fromAccount = await _accountService.GetByIdAsync(amountMoneyTransfer.FromBankAccountId, cancellationToken);
             var targetTransfer = _mapper.Map<MoneyTransfer>(amountMoneyTransfer);
             targetTransfer.Currency = fromAccount.Currency;
             
-            await _accountService.TransferAmountAsync(targetTransfer, cancellationToken);
+            var createdMoneyTransfer = await _accountService.TransferAmountAsync(targetTransfer, cancellationToken);
+            return createdMoneyTransfer.Id;
         }
 
-        [HttpPost("CreateAccount")]
-        public async Task CreateAccount(CreateBankAccountDto account, CancellationToken cancellationToken)
+        [HttpPost("[action]")]
+        public async Task<string> CreateAccount(CreateBankAccountDto account, CancellationToken cancellationToken)
         {
             var targetBankAccount = _mapper.Map<BankAccount>(account);
-            await _accountService.CreateAccountAsync(targetBankAccount, cancellationToken);
+            var createdBankAccount = await _accountService.CreateAccountAsync(targetBankAccount, cancellationToken);
+            return createdBankAccount.Id;
         }
 
-        [HttpPut("UpdateAccount/{accountId}")]
-        public async Task UpdateAccount(string accountId, UpdateAccountDto account, CancellationToken cancellationToken)
+        [HttpPut("[action]/{accountId}")]
+        public async Task<GetBankAccountDto> UpdateAccount(string accountId, UpdateAccountDto account, CancellationToken cancellationToken)
         {
             var targetAccount = _mapper.Map<BankAccount>(account);
             targetAccount.Id = accountId;
             
-            await _accountService.UpdateAccountAsync(targetAccount, cancellationToken);
+            var updatedBankAccount = await _accountService.UpdateAccountAsync(targetAccount, cancellationToken);
+            return _mapper.Map<GetBankAccountDto>(updatedBankAccount);
         }
 
-        [HttpDelete("CloseAccount")]
-        public async Task CloseAccount(string accountId, CancellationToken cancellationToken)
+        [HttpDelete("[action]/{accountId}")]
+        public async Task<bool> CloseAccount(string accountId, CancellationToken cancellationToken)
         {
-            await _accountService.CloseAccountAsync(accountId, cancellationToken);
+            return await _accountService.CloseAccountAsync(accountId, cancellationToken);
         }
     }
 }

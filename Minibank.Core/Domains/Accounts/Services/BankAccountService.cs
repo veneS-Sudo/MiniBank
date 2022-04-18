@@ -9,7 +9,8 @@ using Minibank.Core.Domains.Accounts.Validators;
 using Minibank.Core.Domains.Dal;
 using Minibank.Core.Domains.Transfers;
 using Minibank.Core.Domains.Transfers.Repositories;
-using ValidationException = Minibank.Core.Exceptions.FriendlyExceptions.ValidationException;
+using Minibank.Core.Exceptions.FriendlyExceptions;
+using Minibank.Core.UniversalValidators;
 
 namespace Minibank.Core.Domains.Accounts.Services
 {
@@ -23,12 +24,12 @@ namespace Minibank.Core.Domains.Accounts.Services
         private readonly CloseBankAccountValidator _closeBankAccountValidator;
         private readonly UpdateBankAccountValidator _updateBankAccountValidator;
         private readonly IValidator<MoneyTransfer> _moneyTransferValidator;
-        private readonly IValidator<string> _idValidator;
+        private readonly IdEntityValidator _idValidator;
 
         public BankAccountService(IBankAccountRepository accountRepository, ICurrencyConverter currencyConverter,
             IMoneyTransferRepository moneyTransferRepository, IUnitOfWork unitOfWork,
             CreateBankAccountValidator createBankAccountValidator, CloseBankAccountValidator closeBankAccountValidator,
-            IValidator<MoneyTransfer> moneyTransferValidator, IValidator<string> idValidator, UpdateBankAccountValidator updateBankAccountValidator)
+            IValidator<MoneyTransfer> moneyTransferValidator, IdEntityValidator idValidator, UpdateBankAccountValidator updateBankAccountValidator)
         {
             _accountRepository = accountRepository;
             _currencyConverter = currencyConverter;
@@ -105,7 +106,7 @@ namespace Minibank.Core.Domains.Accounts.Services
             
             if (fromAccount.Balance < moneyTransfer.Amount)
             {
-                throw new ValidationException("недостаточно средств для перевода");
+                throw new ParametersValidationException("недостаточно средств для перевода");
             }
             
             fromAccount.Balance -= moneyTransfer.Amount;

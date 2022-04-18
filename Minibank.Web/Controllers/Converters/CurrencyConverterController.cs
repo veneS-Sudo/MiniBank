@@ -3,11 +3,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Minibank.Core.Converters;
+using Minibank.Core.Exceptions.FriendlyExceptions;
 
 namespace Minibank.Web.Controllers.Converters
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class CurrencyConverterController : ControllerBase
     {
         private readonly ICurrencyConverter _currencyConverter;
@@ -17,15 +18,21 @@ namespace Minibank.Web.Controllers.Converters
             _currencyConverter = currencyConverter;
         }
 
-        [HttpGet]
-        public async Task<decimal> Get(decimal amount, string fromCurrency, string toCurrency, CancellationToken cancellationToken)
+        [HttpGet("[action]")]
+        public async Task<decimal> ConvertCurrency(decimal amount, string fromCurrency, string toCurrency, CancellationToken cancellationToken)
         {
-            return Math.Round( 
-                await _currencyConverter.ConvertAsync(amount,
-                    Enum.Parse<Currency>(fromCurrency, true),
-                    Enum.Parse<Currency>(toCurrency, true),
-                    cancellationToken),
-                2);
+
+            if (fromCurrency == null || Enum.TryParse<Currency>(fromCurrency, true, out var from))
+            {
+                throw new ParametersValidationException("не удалось определить валюту, из которой необходимо конвертировать");
+            }
+            if (toCurrency == null || Enum.TryParse<Currency>(toCurrency, true, out var to))
+            {
+                throw new ParametersValidationException("не удалось определить валюту, в которую необходимо конвертировать");
+            }
+
+
+            return Math.Round(await _currencyConverter.ConvertAsync(amount, from, to, cancellationToken), 2);
         }
     }
 }

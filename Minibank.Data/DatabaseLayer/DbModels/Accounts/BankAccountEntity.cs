@@ -38,7 +38,7 @@ namespace Minibank.Data.DatabaseLayer.DbModels.Accounts
                         x => x.ToString(),
                         y => Enum.Parse<Currency>(y)
                         )).IsRequired();
-                builder.Property(entity => entity.IsOpen).HasDefaultValue(true);
+                builder.Property(entity => entity.IsOpen).IsRequired();
                 builder.Property(entity => entity.DateOpen).IsRequired();
                 builder.Property(entity => entity.DateClose);
 

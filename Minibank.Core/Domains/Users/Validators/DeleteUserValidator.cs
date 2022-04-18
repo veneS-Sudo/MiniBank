@@ -7,8 +7,8 @@ namespace Minibank.Core.Domains.Users.Validators
     {
         public DeleteUserValidator(IBankAccountRepository accountRepository)
         {
-            RuleFor(id => id).NotEmpty().WithMessage("id не должен быть пустым");
-            RuleFor(id => id).MustAsync( async (id, token) => !(await accountRepository.ExistsByUserIdAsync(id, token)))
+            RuleFor(id => id).Cascade(CascadeMode.Stop).NotEmpty().WithMessage("id не должен быть пустым")
+                .MustAsync(async (id, token) => !(await accountRepository.ExistsByUserIdAsync(id, token)))
                 .WithMessage(id => $"Невозможно удалить пользователя по id:{id}, так как у него есть аккаунт(ы)");
         }
     }
