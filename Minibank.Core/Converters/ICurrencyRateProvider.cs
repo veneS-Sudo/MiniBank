@@ -1,7 +1,10 @@
-﻿namespace Minibank.Core.Converters
+﻿using System.Threading;
+using System.Threading.Tasks;
+
+namespace Minibank.Core.Converters
 {
     public interface ICurrencyRateProvider
     {
-        double GetCurrencyRate(Currency currency);
+        Task<decimal> GetCurrencyRateAsync(Currency currency, CancellationToken cancellationToken);
     }
 }
