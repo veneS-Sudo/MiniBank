@@ -1,49 +1,67 @@
 ﻿using System.Collections.Generic;
-using Minibank.Core.Domains.Accounts.Repositories;
+using System.Threading;
+using System.Threading.Tasks;
+using FluentValidation;
+using Minibank.Core.Domains.Dal;
 using Minibank.Core.Domains.Users.Repositories;
-using Minibank.Core.Exceptions.FriendlyExceptions;
+using Minibank.Core.Domains.Users.Validators;
+using Minibank.Core.UniversalValidators;
 
 namespace Minibank.Core.Domains.Users.Services
 {
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
-        private readonly IBankAccountRepository _accountRepository;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IValidator<User> _userValidator;
+        private readonly IdEntityValidator _idValidator;
+        private readonly DeleteUserValidator _deleteUserValidator;
 
-        public UserService(IUserRepository userRepository, IBankAccountRepository accountRepository)
+        public UserService(IUserRepository userRepository, IUnitOfWork unitOfWork, IValidator<User> userValidator,
+            IdEntityValidator idValidator, DeleteUserValidator deleteUserValidator)
         {
             _userRepository = userRepository;
-            _accountRepository = accountRepository;
+            _unitOfWork = unitOfWork;
+            _userValidator = userValidator;
+            _idValidator = idValidator;
+            _deleteUserValidator = deleteUserValidator;
         }
         
-        public User GetById(string id)
+        public async Task<User> GetByIdAsync(string id, CancellationToken cancellationToken)
         {
-            return _userRepository.GetById(id);
+            await _idValidator.ValidateAndThrowAsync(id, cancellationToken);
+            return await _userRepository.GetByIdAsync(id, cancellationToken);
         }
 
-        public List<User> GetAllUsers()
+        public async Task<List<User>> GetAllUsersAsync(CancellationToken cancellationToken)
         {
-            return _userRepository.GetAllUsers();
+            return await _userRepository.GetAllUsersAsync(cancellationToken);
         }
 
-        public void CreateUser(User user)
+        public async Task<User> CreateUserAsync(User user, CancellationToken cancellationToken)
         {
-            _userRepository.CreateUser(user);
+            await _userValidator.ValidateAndThrowAsync(user, cancellationToken);
+            var createUser = await _userRepository.CreateUserAsync(user, cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            return createUser;
         }
 
-        public void UpdateUser(User user)
+        public async Task<User> UpdateUserAsync(User user, CancellationToken cancellationToken)
         {
-            _userRepository.UpdateUser(user);
+            await _idValidator.ValidateAndThrowAsync(user.Id, cancellationToken);
+            await _userValidator.ValidateAndThrowAsync(user, cancellationToken);
+            var updateUser = await _userRepository.UpdateUserAsync(user, cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            return updateUser;
         }
 
-        public void DeleteUser(string id)
+        public async Task<bool> DeleteUserAsync(string id, CancellationToken cancellationToken)
         {
-            if (_accountRepository.ExistsByUserId(id))
-            {
-                throw new ValidationException($"Невозможно удалить пользователя по id:{id}, так как у него есть аккаунт(ы).");
-            }
-            
-            _userRepository.DeleteUser(id);
+            await _deleteUserValidator.ValidateAndThrowAsync(id, cancellationToken);
+           
+            var isDelete = await _userRepository.DeleteUserAsync(id, cancellationToken);
+            var countEntries = await _unitOfWork.SaveChangesAsync(cancellationToken);
+            return isDelete && countEntries > 0;
         }
     }
 }
