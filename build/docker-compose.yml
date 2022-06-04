@@ -1,0 +1,41 @@
+﻿version: '3.8'
+
+services:
+        
+  storage:
+    container_name: minibank_storage
+    image: 'postgres:14.3-alpine'
+    restart: always
+    ports:
+      - '5432:5432'
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=123456
+      - POSTGRES_DB=minibank
+    volumes:
+      - db-data:/var/lib/postgresql/data:delegated
+    networks:
+      - minibank-dev
+    
+  app:
+    container_name: minibank
+    build:
+      context: ..
+      dockerfile: build/Minibank.Dockerfile
+    depends_on:
+      - storage
+    ports:
+      - '5000:5000'
+      - '5001:5001'
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      DB_CONNECTION_STRING: "Host=storage;Port=5432;Database=minibank;Username=postgres;Password=123456"
+    networks:
+      - minibank-dev
+
+volumes:
+  db-data:
+    
+networks:
+  minibank-dev:
+    driver: bridge
