@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Minibank.Core.Domains.Accounts;
 using Minibank.Core.Domains.Accounts.Services;
 using Minibank.Core.Domains.Transfers;
+using Minibank.Core.Domains.Transfers.Services;
 using Minibank.Web.Controllers.Accounts.Dto;
 using Minibank.Web.Controllers.MoneyTransfers.Dto;
 
@@ -16,12 +17,14 @@ namespace Minibank.Web.Controllers.Accounts
     public class BankAccountController : ControllerBase
     {
         private readonly IBankAccountService _accountService;
+        private readonly IMoneyTransferService _moneyTransferService;
         private readonly IMapper _mapper;
 
-        public BankAccountController(IBankAccountService accountService, IMapper mapper)
+        public BankAccountController(IBankAccountService accountService, IMapper mapper, IMoneyTransferService moneyTransferService)
         {
             _accountService = accountService;
             _mapper = mapper;
+            _moneyTransferService = moneyTransferService;
         }
 
         [HttpGet("[action]")]
@@ -45,8 +48,8 @@ namespace Minibank.Web.Controllers.Accounts
             var targetTransfer = _mapper.Map<MoneyTransfer>(amountMoneyTransfer);
             targetTransfer.Currency = fromAccount.Currency;
             
-            var createdMoneyTransfer = await _accountService.TransferAmountAsync(targetTransfer, cancellationToken);
-            return createdMoneyTransfer.Id;
+            var createdMoneyTransferId = await _moneyTransferService.TransferAmountAsync(targetTransfer, cancellationToken);
+            return createdMoneyTransferId;
         }
 
         [HttpPost("[action]")]

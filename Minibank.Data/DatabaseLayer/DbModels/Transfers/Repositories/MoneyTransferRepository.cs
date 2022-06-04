@@ -46,7 +46,7 @@ namespace Minibank.Data.DatabaseLayer.DbModels.Transfers.Repositories
                 .ToListAsync(cancellationToken);
         }
 
-        public async Task<MoneyTransfer> CreateTransferAsync(decimal amount, string fromAccountId, string toAccountId, Currency currency, CancellationToken cancellationToken)
+        public async Task<string> CreateTransferAsync(decimal amount, string fromAccountId, string toAccountId, Currency currency, CancellationToken cancellationToken)
         {
             var entity = new MoneyTransferEntity
             {
@@ -59,17 +59,17 @@ namespace Minibank.Data.DatabaseLayer.DbModels.Transfers.Repositories
 
             var createMoneyTransfer = await _context.AmountTransfers.AddAsync(entity, cancellationToken);
             
-            return _mapper.Map<MoneyTransfer>(createMoneyTransfer.Entity);
+            return createMoneyTransfer.Entity.Id;
         }
 
-        public async Task<MoneyTransfer> CreateTransferAsync(MoneyTransfer moneyTransfer, CancellationToken cancellationToken)
+        public async Task<string> CreateTransferAsync(MoneyTransfer moneyTransfer, CancellationToken cancellationToken)
         {
             var transferEntity = _mapper.Map<MoneyTransferEntity>(moneyTransfer);
             transferEntity.Id = Guid.NewGuid().ToString();
 
             var createMoneyTransfer = await _context.AmountTransfers.AddAsync(transferEntity, cancellationToken);
             
-            return _mapper.Map<MoneyTransfer>(createMoneyTransfer.Entity);
+            return createMoneyTransfer.Entity.Id;
         }
     }
 }

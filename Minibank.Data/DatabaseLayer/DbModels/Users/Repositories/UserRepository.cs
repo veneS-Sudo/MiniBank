@@ -54,7 +54,7 @@ namespace Minibank.Data.DatabaseLayer.DbModels.Users.Repositories
             return _mapper.Map<User>(createUser.Entity);
         }
 
-        public async Task<User> UpdateUserAsync(User user, CancellationToken cancellationToken)
+        public async Task<bool> UpdateUserAsync(User user, CancellationToken cancellationToken)
         {
             var userEntity = await _context.Users.FindAsync(new object[] { user.Id }, cancellationToken);
             if (userEntity == null)
@@ -65,7 +65,7 @@ namespace Minibank.Data.DatabaseLayer.DbModels.Users.Repositories
             userEntity.Login = user.Login;
             userEntity.Email = user.Email;
 
-            return _mapper.Map<User>(userEntity);
+            return true;
         }
 
         public async Task<bool> DeleteUserAsync(string id, CancellationToken cancellationToken)
@@ -80,7 +80,7 @@ namespace Minibank.Data.DatabaseLayer.DbModels.Users.Repositories
             return deleteUser.State == EntityState.Deleted;
         }
 
-        public async Task<bool> ExistsAsync(string id, CancellationToken cancellationToken)
+        public async Task<bool> IsExistAsync(string id, CancellationToken cancellationToken)
         {
             return await _context.Users
                 .AsNoTracking()

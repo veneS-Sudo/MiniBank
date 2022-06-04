@@ -6,5 +6,8 @@ namespace Minibank.Core.Exceptions.FriendlyExceptions
     {
         public ObjectNotFoundException(string message) : base(message)
         { }
+
+        public ObjectNotFoundException()
+        { }
     }
 }
