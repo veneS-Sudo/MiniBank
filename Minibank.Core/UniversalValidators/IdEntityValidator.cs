@@ -9,7 +9,7 @@ namespace Minibank.Core.UniversalValidators
         {
             RuleFor(id => id).NotEmpty().WithMessage("id не должен быть пустым");
         }
-        
+
         protected override bool PreValidate(ValidationContext<string> context, ValidationResult result)
         {
             if (context.InstanceToValidate == null)

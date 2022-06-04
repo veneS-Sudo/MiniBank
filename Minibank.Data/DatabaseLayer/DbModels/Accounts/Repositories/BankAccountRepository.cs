@@ -56,7 +56,7 @@ namespace Minibank.Data.DatabaseLayer.DbModels.Accounts.Repositories
             return _mapper.Map<BankAccount>(createBankAccount.Entity);
         }
 
-        public async Task<BankAccount> UpdateAccountAsync(BankAccount bankAccount, CancellationToken cancellationToken)
+        public async Task<bool> UpdateAccountAsync(BankAccount bankAccount, CancellationToken cancellationToken)
         {
             var targetAccount = await _context.BankAccounts.FindAsync( new object[] { bankAccount.Id }, cancellationToken);
 
@@ -67,10 +67,10 @@ namespace Minibank.Data.DatabaseLayer.DbModels.Accounts.Repositories
             
             targetAccount.Balance = bankAccount.Balance;
 
-            return _mapper.Map<BankAccount>(targetAccount);
+            return true;
         }
 
-        public async Task<bool> ExistsByUserIdAsync(string userId, CancellationToken cancellationToken)
+        public async Task<bool> ExistByUserIdAsync(string userId, CancellationToken cancellationToken)
         {
             return await _context.BankAccounts
                 .AsNoTracking()
@@ -91,7 +91,7 @@ namespace Minibank.Data.DatabaseLayer.DbModels.Accounts.Repositories
             return !bankAccountEntity.IsOpen;
         }
 
-        public async Task<bool> BankAccountIsOpenAsync(string id, CancellationToken cancellationToken)
+        public async Task<bool> IsOpenAsync(string id, CancellationToken cancellationToken)
         {
             var bankAccountEntity = await _context.BankAccounts
                 .AsNoTracking()
@@ -102,6 +102,11 @@ namespace Minibank.Data.DatabaseLayer.DbModels.Accounts.Repositories
             }
 
             return bankAccountEntity.IsOpen;
+        }
+
+        public async Task<bool> IsExistAsync(string id, CancellationToken cancellationToken)
+        {
+            return await _context.Users.AnyAsync(entity => entity.Id == id, cancellationToken);
         }
     }
 }

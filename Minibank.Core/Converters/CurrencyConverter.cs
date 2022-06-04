@@ -18,10 +18,10 @@ namespace Minibank.Core.Converters
         {
             if (amount < 0)
             {
-                throw new ParametersValidationException("Сумма перевода не может быть отрицательной!");
+                throw new NegativeAmountConvertException("Сумма перевода не может быть отрицательной!");
             }
-
-            if (fromCurrency == toCurrency)
+            
+            if (amount == 0 || fromCurrency == toCurrency)
             {
                 return amount;
             }

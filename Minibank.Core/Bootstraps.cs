@@ -1,9 +1,10 @@
-﻿using FluentValidation;
-using FluentValidation.AspNetCore;
+﻿using FluentValidation.AspNetCore;
 using Microsoft.Extensions.DependencyInjection;
 using Minibank.Core.Converters;
 using Minibank.Core.Domains.Accounts.Services;
+using Minibank.Core.Domains.Transfers.Services;
 using Minibank.Core.Domains.Users.Services;
+using Minibank.Core.UniversalValidators;
 
 namespace Minibank.Core
 {
@@ -14,8 +15,15 @@ namespace Minibank.Core
             services.AddScoped<ICurrencyConverter, CurrencyConverter>();
             services.AddScoped<IUserService,UserService>();
             services.AddScoped<IBankAccountService, BankAccountService>();
+            services.AddScoped<IMoneyTransferService, MoneyTransferService>();
+            services.AddScoped<ICommissionCalculator, CommissionCalculator>();
+            services.AddScoped<IFractionalNumberEditor, FractionalNumberEditor>();
 
-            services.AddFluentValidation().AddValidatorsFromAssembly(typeof(IUserService).Assembly);
+            services.AddFluentValidation(fv =>
+            {
+                fv.RegisterValidatorsFromAssemblyContaining<IdEntityValidator>();
+                fv.AutomaticValidationEnabled = false;
+            });
             return services;
         }
     }

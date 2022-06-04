@@ -22,11 +22,11 @@ namespace Minibank.Web.Controllers.Converters
         public async Task<decimal> ConvertCurrency(decimal amount, string fromCurrency, string toCurrency, CancellationToken cancellationToken)
         {
 
-            if (fromCurrency == null || Enum.TryParse<Currency>(fromCurrency, true, out var from))
+            if (fromCurrency == null || !Enum.TryParse<Currency>(fromCurrency, true, out var from))
             {
                 throw new ParametersValidationException("не удалось определить валюту, из которой необходимо конвертировать");
             }
-            if (toCurrency == null || Enum.TryParse<Currency>(toCurrency, true, out var to))
+            if (toCurrency == null || !Enum.TryParse<Currency>(toCurrency, true, out var to))
             {
                 throw new ParametersValidationException("не удалось определить валюту, в которую необходимо конвертировать");
             }
