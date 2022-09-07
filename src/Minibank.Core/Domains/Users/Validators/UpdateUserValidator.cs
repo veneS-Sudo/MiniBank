@@ -1,5 +1,4 @@
 using FluentValidation;
-using Minibank.Core.Domains.Accounts.Validators;
 using Minibank.Core.Domains.Users.Repositories;
 
 namespace Minibank.Core.Domains.Users.Validators

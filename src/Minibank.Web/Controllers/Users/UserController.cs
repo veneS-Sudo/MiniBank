@@ -1,11 +1,9 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Minibank.Core.Domains.Accounts;
 using Minibank.Core.Domains.Users;
 using Minibank.Core.Domains.Users.Services;
 using Minibank.Web.Controllers.Users.Dto;

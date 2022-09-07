@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿#nullable enable
+using System.Collections.Generic;
 using Minibank.Core.Domains.Transfers;
 
 namespace Minibank.Core.Tests.Domains.Transfers.EqualityComparers

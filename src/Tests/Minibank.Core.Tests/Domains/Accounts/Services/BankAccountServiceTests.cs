@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using Microsoft.Extensions.Logging;
 using Minibank.Core.Converters;
 using Minibank.Core.Domains.Accounts;
 using Minibank.Core.Domains.Accounts.Repositories;
@@ -35,9 +36,10 @@ namespace Minibank.Core.Tests.Domains.Accounts.Services
             var closeBankAccountValidator = new CloseBankAccountValidator();
             var updateBankAccountValidator = new UpdateBankAccountValidator(_accountRepositoryMock.Object);
             var idValidator = new IdEntityValidator();
+            var logger = new Mock<ILogger<BankAccountService>>();
 
             _accountService = new BankAccountService(_accountRepositoryMock.Object, _unitOfWorkMock.Object, createBankAccountValidator,
-                closeBankAccountValidator, idValidator, updateBankAccountValidator);
+                closeBankAccountValidator, idValidator, updateBankAccountValidator, logger.Object);
         }
         
         [Fact]
@@ -88,14 +90,15 @@ namespace Minibank.Core.Tests.Domains.Accounts.Services
         }
         
         [Fact]
-        public async void GetAllAccountAsync_GetAllBankAccount_ShouldReturnNotEmpty()
+        public async void GetAllAccountAsync_GetAllBankAccount_ShouldReturnNotEmptyOrNull()
         {
             var accounts = new List<BankAccount> { new() };
             _accountRepositoryMock.Setup(repository => repository.GetAllAccountsAsync(It.IsAny<CancellationToken>()).Result)
                 .Returns(accounts);
         
             var actual = await _accountService.GetAllAccountsAsync(CancellationToken.None);
-        
+
+            Assert.NotNull(actual);
             Assert.NotEmpty(actual);
         }
 
@@ -116,8 +119,8 @@ namespace Minibank.Core.Tests.Domains.Accounts.Services
         {
             var expectedAccounts = new List<BankAccount>()
             {
-                new () { UserId = "User_1", Balance = Decimal.Zero, Currency = Currency.RUB, DateOpen = DateTime.MinValue},
-                new () { UserId = "User_2", Balance = Decimal.One, Currency = Currency.USD, DateOpen = DateTime.MinValue}
+                new () { UserId = "User_1", Balance = Decimal.Zero, Currency = Currency.Rub, DateOpen = DateTime.MinValue},
+                new () { UserId = "User_2", Balance = Decimal.One, Currency = Currency.Usd, DateOpen = DateTime.MinValue}
             };
             _accountRepositoryMock.Setup(_ => _.GetAllAccountsAsync(It.IsAny<CancellationToken>()).Result)
                 .Returns(expectedAccounts);
@@ -141,8 +144,8 @@ namespace Minibank.Core.Tests.Domains.Accounts.Services
         public async void CreateAccountAsync_CreateValidBankAccount_ShouldReturnCreatedBankAccount()
         {
             var userId = "SomeExistUserId";
-            var account = new BankAccount() {Balance = 0m, Currency = Currency.RUB, UserId = userId };
-            var expectedAccount = new BankAccount() { Id = "SomeId", Balance = 0m, Currency = Currency.RUB, UserId = userId, DateOpen = DateTime.Today };
+            var account = new BankAccount() {Balance = 0m, Currency = Currency.Rub, UserId = userId };
+            var expectedAccount = new BankAccount() { Id = "SomeId", Balance = 0m, Currency = Currency.Rub, UserId = userId, DateOpen = DateTime.Today };
             _accountRepositoryMock.Setup(
                 repository => repository.CreateAccountAsync(account, It.IsAny<CancellationToken>()).Result)
                 .Returns(expectedAccount);
@@ -157,7 +160,7 @@ namespace Minibank.Core.Tests.Domains.Accounts.Services
         public async void CreateAccountAsync_CreateValidBankAccount_MethodCreateOfAccountRepositoryShouldInvokeOnce()
         {
             var userId = "SomeExistUserId";
-            var account = new BankAccount() {Balance = 0m, Currency = Currency.RUB, UserId = userId };
+            var account = new BankAccount() {Balance = 0m, Currency = Currency.Rub, UserId = userId };
             _userRepositoryMock.SetupExist(userId).Returns(true);
             
             await _accountService.CreateAccountAsync(account, CancellationToken.None);
@@ -170,7 +173,7 @@ namespace Minibank.Core.Tests.Domains.Accounts.Services
         public async void CreateAccountAsync_CreateValidBankAccount_MethodCreateOfAccountRepositoryShouldInvokeWithSameAccount()
         {
             var userId = "SomeExistUserId";
-            var bankAccount = new BankAccount() {Balance = 0m, Currency = Currency.RUB, UserId = userId };
+            var bankAccount = new BankAccount() {Balance = 0m, Currency = Currency.Rub, UserId = userId };
             _userRepositoryMock.SetupExist(userId).Returns(true);
 
             await _accountService.CreateAccountAsync(bankAccount, CancellationToken.None);
@@ -183,7 +186,7 @@ namespace Minibank.Core.Tests.Domains.Accounts.Services
         public async void CreateAccountAsync_CreateValidBankAccount_MethodIsExistOfUserRepositoryShouldInvokeOnce()
         {
             var userId = "SomeExistUserId";
-            var account = new BankAccount() {Balance = 0m, Currency = Currency.RUB, UserId = userId};
+            var account = new BankAccount() {Balance = 0m, Currency = Currency.Rub, UserId = userId};
             _userRepositoryMock.SetupExist(userId).Returns(true);
             
             await _accountService.CreateAccountAsync(account, CancellationToken.None);
@@ -195,7 +198,7 @@ namespace Minibank.Core.Tests.Domains.Accounts.Services
         public async void CreateAccountAsync_CreateValidBankAccount_MethodIsExistOfUserRepositoryShouldInvokeWithSameUserId()
         {
             var userId = "SomeExistUserId";
-            var account = new BankAccount() {Balance = 0m, Currency = Currency.RUB, UserId = userId};
+            var account = new BankAccount() {Balance = 0m, Currency = Currency.Rub, UserId = userId};
             _userRepositoryMock.SetupExist(userId).Returns(true);
             
             await _accountService.CreateAccountAsync(account, CancellationToken.None);
@@ -207,7 +210,7 @@ namespace Minibank.Core.Tests.Domains.Accounts.Services
         public async void CreateAccountAsync_CreateValidBankAccount_MethodSaveOfUnitOfWorkShouldInvokeOnce()
         {
             var userId = "SomeExistUserId";
-            var account = new BankAccount() {Balance = 0m, Currency = Currency.RUB, UserId = userId };
+            var account = new BankAccount() {Balance = 0m, Currency = Currency.Rub, UserId = userId };
             _userRepositoryMock.SetupExist(userId).Returns(true);
             
             await _accountService.CreateAccountAsync(account, CancellationToken.None);
@@ -219,7 +222,7 @@ namespace Minibank.Core.Tests.Domains.Accounts.Services
         public async void CreateAccountAsync_CreateBankAccountByNotExistUser_ThrowValidationException()
         {
             var userId = "SomeNotExistUserId";
-            var account = new BankAccount() { Balance = 0m, Currency = Currency.RUB, UserId = userId };
+            var account = new BankAccount() { Balance = 0m, Currency = Currency.Rub, UserId = userId };
             _userRepositoryMock.SetupExist(userId).Returns(false);
 
             await Assert.ThrowsAsync<ValidationException>(

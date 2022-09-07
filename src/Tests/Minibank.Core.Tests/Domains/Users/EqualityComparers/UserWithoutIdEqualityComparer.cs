@@ -1,4 +1,4 @@
-using System;
+#nullable enable
 using System.Collections.Generic;
 using Minibank.Core.Domains.Users;
 

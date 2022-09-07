@@ -24,12 +24,12 @@ namespace Minibank.Core.Tests.Domains.Accounts.Validators
         }
 
         [Theory]
-        [InlineData(0, Currency.RUB)]
-        [InlineData(0, Currency.EUR)]
-        [InlineData(0, Currency.USD)]
-        [InlineData(100, Currency.RUB)]
-        [InlineData(100, Currency.EUR)]
-        [InlineData(100, Currency.USD)]
+        [InlineData(0, Currency.Rub)]
+        [InlineData(0, Currency.Eur)]
+        [InlineData(0, Currency.Usd)]
+        [InlineData(100, Currency.Rub)]
+        [InlineData(100, Currency.Eur)]
+        [InlineData(100, Currency.Usd)]
         public async void ValidationAsync_SuccessPath_ValidatorShouldNotHaveAnyExceptions(decimal balance, Currency currency)
         {
             var userId = "SomeExistUserId";
@@ -45,7 +45,7 @@ namespace Minibank.Core.Tests.Domains.Accounts.Validators
         public async void ValidationAsync_ValidateBankAccount_MethodIsExistOfUserRepositoryShouldInvokeOnceWithSameUserId()
         {
             var userId = "SomeExistUserId";
-            var bankAccount = new BankAccount() { Balance = 0, Currency = Currency.RUB, UserId = userId };
+            var bankAccount = new BankAccount() { Balance = 0, Currency = Currency.Rub, UserId = userId };
             _userRepositoryMock.SetupExist(userId).Returns(true);
 
             await _validator.TestValidateAsync(bankAccount);
@@ -57,7 +57,7 @@ namespace Minibank.Core.Tests.Domains.Accounts.Validators
         public async void ValidationAsync_ValidateBankAccountWithNegativeBalance_MemberBalanceShouldInvalid()
         {
             var userId = "SomeExistUserId";
-            var bankAccount = new BankAccount() { Balance = -1, Currency = Currency.RUB, UserId = userId };
+            var bankAccount = new BankAccount() { Balance = -1, Currency = Currency.Rub, UserId = userId };
             _userRepositoryMock.SetupExist(userId).Returns(true);
             
             var validationResult = await _validator.TestValidateAsync(bankAccount);
@@ -82,7 +82,7 @@ namespace Minibank.Core.Tests.Domains.Accounts.Validators
         public async void ValidationAsync_ValidateBankAccountOfNotExistUser_MemberUserIdShouldInvalid()
         {
             var userId = "SomeNotExistUserId";
-            var bankAccount = new BankAccount() { Balance = 0, Currency = Currency.RUB, UserId = userId };
+            var bankAccount = new BankAccount() { Balance = 0, Currency = Currency.Rub, UserId = userId };
             _userRepositoryMock.SetupExist(userId).Returns(false);
             
             var validationResult = await _validator.TestValidateAsync(bankAccount);

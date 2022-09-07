@@ -2,7 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Minibank.Core.Converters;
-using Minibank.Core.Domains.Users;
 
 namespace Minibank.Core.Domains.Transfers.Repositories
 {
@@ -10,6 +9,7 @@ namespace Minibank.Core.Domains.Transfers.Repositories
     {
         Task<MoneyTransfer> GetByIdAsync(string id, CancellationToken cancellationToken);
         Task<List<MoneyTransfer>> GetAllTransfersAsync(CancellationToken cancellationToken);
+        Task<List<MoneyTransfer>> GetAllTransfersAsync(string bankAccountId, CancellationToken cancellationToken);
         Task<string> CreateTransferAsync(decimal amount, string fromAccountId, string toAccountId, Currency currency, CancellationToken cancellationToken);
         Task<string> CreateTransferAsync(MoneyTransfer moneyTransfer, CancellationToken cancellationToken);
     }

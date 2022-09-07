@@ -18,7 +18,7 @@ namespace Minibank.Data.Providers.CurrencyProviders
         
         public async Task<decimal> GetCurrencyRateAsync(Currency currency, CancellationToken cancellationToken)
         {
-            if (currency == Currency.RUB)
+            if (currency == Currency.Rub)
             {
                 return 1;
             }

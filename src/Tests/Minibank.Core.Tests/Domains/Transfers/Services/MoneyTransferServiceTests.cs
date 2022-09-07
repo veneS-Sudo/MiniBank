@@ -1,6 +1,9 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using FluentValidation;
+using Microsoft.Extensions.Logging;
 using Minibank.Core.Converters;
 using Minibank.Core.Domains.Accounts;
 using Minibank.Core.Domains.Accounts.Repositories;
@@ -33,23 +36,24 @@ namespace Minibank.Core.Tests.Domains.Transfers.Services
             _currencyConverterMock = new Mock<ICurrencyConverter>();
             _bankAccountRepositoryMock = new Mock<IBankAccountRepository>();
             _unitOfWorkMock = new Mock<IUnitOfWork>();
+            var loggerMock = new Mock<ILogger<MoneyTransferService>>();
             IValidator<MoneyTransfer> moneyTransferValidator = new MoneyTransferValidator(_bankAccountRepositoryMock.Object);
 
             _moneyTransferService = new MoneyTransferService(_moneyTransferRepositoryMock.Object,
                 _currencyConverterMock.Object, moneyTransferValidator, _bankAccountRepositoryMock.Object,
-                _unitOfWorkMock.Object, _commissionCalculatorMock.Object);
+                _unitOfWorkMock.Object, _commissionCalculatorMock.Object, loggerMock.Object);
         }
 
         private void SetupAssertions(out MoneyTransfer moneyTransfer)
         {
             var senderBankAccountId = "SomeAccountId_1";
             var recipientBankAccountId = "SomeAccountId_2";
-            var senderBankAccount = new BankAccount() { Id = senderBankAccountId, Balance = 1000m, Currency = Currency.EUR };
-            var recipientBankAccount = new BankAccount() { Id = recipientBankAccountId, Balance = 1000m, Currency = Currency.EUR };
+            var senderBankAccount = new BankAccount() { Id = senderBankAccountId, Balance = 1000m, Currency = Currency.Eur };
+            var recipientBankAccount = new BankAccount() { Id = recipientBankAccountId, Balance = 1000m, Currency = Currency.Eur };
             moneyTransfer = new MoneyTransfer()
             {
                 Amount = decimal.One,
-                Currency = Currency.EUR,
+                Currency = Currency.Eur,
                 FromBankAccountId = senderBankAccountId,
                 ToBankAccountId = recipientBankAccountId
             };
@@ -60,8 +64,83 @@ namespace Minibank.Core.Tests.Domains.Transfers.Services
                     _.GetByIdAsync(senderBankAccountId, It.IsAny<CancellationToken>()).Result).Returns(senderBankAccount);
             _bankAccountRepositoryMock.Setup(_ => 
                     _.GetByIdAsync(recipientBankAccountId, It.IsAny<CancellationToken>()).Result).Returns(recipientBankAccount);
+            _bankAccountRepositoryMock.Setup(
+                _ => _.UpdateAccountAsync(It.IsAny<BankAccount>(), It.IsAny<CancellationToken>()).Result).Returns(true);
         }
-        
+
+
+        [Fact]
+        public async void GetAllTransfersAsync_GetAllTransfersForExistBankAccount_ShouldReturnNotEmptyOrNullCollection()
+        {
+            var accountId = "SomeId";
+            var moneyTransfers = new List<MoneyTransfer>() { new() };
+            _moneyTransferRepositoryMock.Setup(
+                _ => _.GetAllTransfersAsync(accountId, It.IsAny<CancellationToken>()).Result)
+                .Returns(moneyTransfers);
+            _bankAccountRepositoryMock.SetupExist(accountId).Returns(true);
+            
+            var actual = await _moneyTransferService.GetAllTransfersAsync(accountId, CancellationToken.None);
+            
+            Assert.NotNull(actual);
+            Assert.NotEmpty(actual);
+        }
+
+        [Theory]
+        [InlineData(1)]
+        [InlineData(5)]
+        [InlineData(10)]
+        [InlineData(42)]
+        public async void GetAllTransfersAsync_GetAllTransfersForExistBankAccount_ShouldReturnSameCountItemsOfCollection(int count)
+        {
+            var accountId = "SomeId";
+            var moneyTransfers = Enumerable.Repeat(new MoneyTransfer(), count).ToList();
+            _moneyTransferRepositoryMock.Setup(
+                _ => _.GetAllTransfersAsync(accountId, It.IsAny<CancellationToken>()).Result)
+                .Returns(moneyTransfers);
+            _bankAccountRepositoryMock.SetupExist(accountId).Returns(true);
+
+            var actual = await _moneyTransferService.GetAllTransfersAsync(accountId, CancellationToken.None);
+
+            Assert.Equal(count, actual.Count);
+        }
+
+        [Fact]
+        public async void GetAllTransfersAsync_GetAllTransfersForExistBankAccount_ShouldReturnSameItems()
+        {
+            var accountId = "SomeId";
+            var moneyTransfers = new List<MoneyTransfer>() 
+                { new() {Id = "SomeId_1"}, new() {Id = "SomeId_2"}, new() {Id = "SomeId_3"} };
+            _moneyTransferRepositoryMock.Setup(
+                _ => _.GetAllTransfersAsync(accountId, It.IsAny<CancellationToken>()).Result)
+                .Returns(moneyTransfers);
+            _bankAccountRepositoryMock.SetupExist(accountId).Returns(true);
+            
+            var actual = await _moneyTransferService.GetAllTransfersAsync(accountId, CancellationToken.None);
+            
+            Assert.Equal(moneyTransfers, actual, new MoneyTransferEqualityComparer());
+        }
+
+        [Fact]
+        public async void GetAllTransfersAsync_GetAllTransfersForNotExistBankAccount_ShouldThrowObjectNotFoundException()
+        {
+            var accountId = "SomeId";
+            _bankAccountRepositoryMock.SetupExist(accountId).Returns(false);
+
+            await Assert.ThrowsAsync<ObjectNotFoundException>(
+                () => _moneyTransferService.GetAllTransfersAsync(accountId, CancellationToken.None));
+        }
+
+        [Fact]
+        public async void GetAllTransfersAsync_GetAllTransfersForExistBankAccount_MethodGetAllOfTransferRepositoryShouldInvokeOnce()
+        {
+            var accountId = "SomeId";
+            _bankAccountRepositoryMock.SetupExist(accountId).Returns(true);
+            
+            await _moneyTransferService.GetAllTransfersAsync(accountId, CancellationToken.None);
+
+            _moneyTransferRepositoryMock.Verify(_ => _.GetAllTransfersAsync(accountId, It.IsAny<CancellationToken>()),
+                Times.Once);
+        }
         
         [Fact]
         public async void TransferAmountAsync_TransferPositiveAmountBetweenExistAccounts_ShouldReturnTransferId()
@@ -111,7 +190,7 @@ namespace Minibank.Core.Tests.Domains.Transfers.Services
             await _moneyTransferService.TransferAmountAsync(moneyTransfer, CancellationToken.None);
 
             _bankAccountRepositoryMock.Verify(
-                _ => _.GetByIdAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Exactly(2));
+                _ => _.GetByIdAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.AtLeast(2));
         }
         
         [Fact]
@@ -145,7 +224,7 @@ namespace Minibank.Core.Tests.Domains.Transfers.Services
             var moneyTransfer = new MoneyTransfer()
             {
                 Amount = decimal.One,
-                Currency = Currency.EUR,
+                Currency = Currency.Eur,
                 FromBankAccountId = bankAccounts[0],
                 ToBankAccountId = bankAccounts[1]
             };
@@ -197,6 +276,53 @@ namespace Minibank.Core.Tests.Domains.Transfers.Services
         }
 
         [Fact]
+        public async void TransferAmountAsync_TransferAmountButSenderNotUpdated_ThrowTransferNotCompletedException()
+        {
+            SetupAssertions(out var moneyTransfer);
+            var senderId = moneyTransfer.FromBankAccountId;
+            _bankAccountRepositoryMock.Setup(
+                _ => _.UpdateAccountAsync(It.Is<BankAccount>(account => account.Id == senderId),
+                        It.IsAny<CancellationToken>()).Result)
+                .Returns(false);
+            
+            await Assert.ThrowsAsync<TransferNotCompletedException>(
+                () => _moneyTransferService.TransferAmountAsync(moneyTransfer, CancellationToken.None));
+        }
+        
+        [Fact]
+        public async void TransferAmountAsync_TransferAmountButRecipientNotUpdated_ThrowTransferNotCompletedException()
+        {
+            SetupAssertions(out var moneyTransfer);
+            var recipientId = moneyTransfer.ToBankAccountId;
+            _bankAccountRepositoryMock.Setup(
+                _ => _.UpdateAccountAsync(It.Is<BankAccount>(account => account.Id == recipientId),
+                    It.IsAny<CancellationToken>()).Result)
+                .Returns(false);
+            
+            await Assert.ThrowsAsync<TransferNotCompletedException>(
+                () => _moneyTransferService.TransferAmountAsync(moneyTransfer, CancellationToken.None));    
+        }
+
+        [Fact]
+        public async void TransferAmountAsync_TransferAmountButSenderAndRecipientNotUpdated_ThrowTransferNotCompletedException()
+        {
+            SetupAssertions(out var moneyTransfer);
+            var senderId = moneyTransfer.FromBankAccountId;
+            var recipientId = moneyTransfer.ToBankAccountId;
+            _bankAccountRepositoryMock.Setup(
+                _ => _.UpdateAccountAsync(It.Is<BankAccount>(account => account.Id == senderId),
+                    It.IsAny<CancellationToken>()).Result)
+                .Returns(false);
+            _bankAccountRepositoryMock.Setup(
+                _ => _.UpdateAccountAsync(It.Is<BankAccount>(account => account.Id == recipientId),
+                    It.IsAny<CancellationToken>()).Result)
+                .Returns(false);
+            
+            await Assert.ThrowsAsync<TransferNotCompletedException>(
+                () => _moneyTransferService.TransferAmountAsync(moneyTransfer, CancellationToken.None));
+        }
+
+        [Fact]
         public async void TransferAmountAsync_TransferAmount_MethodCreateTransferOfMoneyTransferRepositoryShouldInvokeOnce()
         {
             SetupAssertions(out var moneyTransfer);
@@ -237,13 +363,13 @@ namespace Minibank.Core.Tests.Domains.Transfers.Services
             var expectedInvocation = "saveChanges";
             SetupAssertions(out var moneyTransfer);
             _bankAccountRepositoryMock.Setup(
-                _ => _.UpdateAccountAsync(It.IsAny<BankAccount>(), It.IsAny<CancellationToken>()).Result).Callback(
-                    () => lastInvocation = "update");
+                _ => _.UpdateAccountAsync(It.IsAny<BankAccount>(), It.IsAny<CancellationToken>()).Result).Returns(true)
+                .Callback(() => lastInvocation = "update");
             _moneyTransferRepositoryMock.Setup(
-                _ => _.CreateTransferAsync(It.IsAny<MoneyTransfer>(), It.IsAny<CancellationToken>()).Result).Callback(
-                    () => lastInvocation = "createMoneyTransfer");
-            _unitOfWorkMock.Setup(_ => _.SaveChangesAsync(It.IsAny<CancellationToken>()).Result).Callback(
-                () => lastInvocation = expectedInvocation);
+                _ => _.CreateTransferAsync(It.IsAny<MoneyTransfer>(), It.IsAny<CancellationToken>()).Result)
+                .Callback(() => lastInvocation = "createMoneyTransfer");
+            _unitOfWorkMock.Setup(_ => _.SaveChangesAsync(It.IsAny<CancellationToken>()).Result)
+                .Callback(() => lastInvocation = expectedInvocation);
             
             await _moneyTransferService.TransferAmountAsync(moneyTransfer, CancellationToken.None);
 
@@ -258,7 +384,7 @@ namespace Minibank.Core.Tests.Domains.Transfers.Services
             var moneyTransfer = new MoneyTransfer()
             {
                 Amount = 100m,
-                Currency = Currency.EUR,
+                Currency = Currency.Eur,
                 FromBankAccountId = bankAccounts[0],
                 ToBankAccountId = bankAccounts[1]
             };
@@ -275,6 +401,8 @@ namespace Minibank.Core.Tests.Domains.Transfers.Services
             _commissionCalculatorMock.Setup(
                 _ => _.CalculateCommissionAsync(It.IsAny<MoneyTransfer>(), It.IsAny<CancellationToken>()).Result)
                 .Returns(commission);
+            _bankAccountRepositoryMock.Setup(
+                _ => _.UpdateAccountAsync(It.IsAny<BankAccount>(), It.IsAny<CancellationToken>()).Result).Returns(true);
             
             await _moneyTransferService.TransferAmountAsync(moneyTransfer, CancellationToken.None);
             

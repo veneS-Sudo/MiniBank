@@ -49,8 +49,8 @@ namespace Minibank.Web.Controllers.Accounts
             var fromAccount = await _accountService.GetByIdAsync(amountMoneyTransfer.FromBankAccountId, cancellationToken);
             var targetTransfer = _mapper.Map<MoneyTransfer>(amountMoneyTransfer);
             targetTransfer.Currency = fromAccount.Currency;
-            
             var createdMoneyTransferId = await _moneyTransferService.TransferAmountAsync(targetTransfer, cancellationToken);
+            
             return createdMoneyTransferId;
         }
 

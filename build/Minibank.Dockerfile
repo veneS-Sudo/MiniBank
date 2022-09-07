@@ -1,18 +1,18 @@
 # From base image for build (with sdk)
-FROM mcr.microsoft.com/dotnet/sdk:5.0 AS src
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS src
 WORKDIR /src
 # Copy src to image
 COPY /src .
 
 # Run building the project with packets restoring
-RUN dotnet build Minibank.Web -c Release -r linux-x64
+RUN dotnet build Minibank.Web -c Release -r linux-x64 --self-contained
 #Run tests
 RUN dotnet test Tests/Minibank.Core.Tests --no-build
 # Publish projects' dll to /dist directory
-RUN dotnet publish Minibank.Web -c Release -r linux-x64 --no-build -o /dist
+RUN dotnet publish Minibank.Web -c Release -r linux-x64 --self-contained --no-build -o /dist
 
 # From base image with runtime only
-FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS final
+FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS final
 WORKDIR /app
 
 # Set timezone

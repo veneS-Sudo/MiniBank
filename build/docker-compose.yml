@@ -1,7 +1,23 @@
-﻿version: '3.8'
+﻿version: '3.3'
 
 services:
-        
+
+  seq_host:
+    container_name: seq_logger
+    image: datalust/seq:latest
+    restart: unless-stopped
+    environment:
+      - ACCEPT_EULA=Y
+      - SEQ_FIRSTRUN_ADMINPASSWORDHASH=$PH
+      - SEQ_FIRSTRUN_ADMINUSERNAME=admin
+    ports:
+      - '80:80'
+      - '5341:5341'
+    volumes:
+      - seq-data:/var/lib/seq/data
+    networks:
+      - minibank-dev
+       
   storage:
     container_name: minibank_storage
     image: 'postgres:14.3-alpine'
@@ -24,17 +40,20 @@ services:
       dockerfile: build/Minibank.Dockerfile
     depends_on:
       - storage
+      - seq_host
     ports:
       - '5000:5000'
       - '5001:5001'
     environment:
-      ASPNETCORE_ENVIRONMENT: "Development"
-      DB_CONNECTION_STRING: "Host=storage;Port=5432;Database=minibank;Username=postgres;Password=123456"
+      - ASPNETCORE_ENVIRONMENT=Development
+      - DB_CONNECTION_STRING=Host=storage;Port=5432;Database=minibank;Username=postgres;Password=123456
+      - Serilog__WriteTo__1__Args__serverUrl=http://seq_host:5341
     networks:
       - minibank-dev
 
 volumes:
   db-data:
+  seq-data:
     
 networks:
   minibank-dev:

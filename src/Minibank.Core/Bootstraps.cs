@@ -1,4 +1,5 @@
-﻿using FluentValidation.AspNetCore;
+﻿using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.Extensions.DependencyInjection;
 using Minibank.Core.Converters;
 using Minibank.Core.Domains.Accounts.Services;
@@ -19,11 +20,11 @@ namespace Minibank.Core
             services.AddScoped<ICommissionCalculator, CommissionCalculator>();
             services.AddScoped<IFractionalNumberEditor, FractionalNumberEditor>();
 
-            services.AddFluentValidation(fv =>
-            {
-                fv.RegisterValidatorsFromAssemblyContaining<IdEntityValidator>();
-                fv.AutomaticValidationEnabled = false;
-            });
+            //Add all validators from assembly
+            services.AddValidatorsFromAssemblyContaining<IdEntityValidator>();
+            //include only client-side validators
+            services.AddFluentValidationClientsideAdapters();
+            
             return services;
         }
     }
