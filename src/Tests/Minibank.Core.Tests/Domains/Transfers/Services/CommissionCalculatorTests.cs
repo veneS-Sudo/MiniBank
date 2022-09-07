@@ -35,7 +35,7 @@ namespace Minibank.Core.Tests.Domains.Transfers.Services
             moneyTransfer = new MoneyTransfer()
             {
                 Amount = decimal.One,
-                Currency = Currency.RUB,
+                Currency = Currency.Rub,
                 FromBankAccountId = senderBankAccountId,
                 ToBankAccountId = recipientBankAccountId
             };

@@ -40,10 +40,19 @@ namespace Minibank.Data.DatabaseLayer.DbModels.Transfers.Repositories
 
         public async Task<List<MoneyTransfer>> GetAllTransfersAsync(CancellationToken cancellationToken)
         {
-            return await _context.AmountTransfers
+            var transfers = await _context.AmountTransfers
                 .AsNoTracking()
-                .Select(transferEntity => _mapper.Map<MoneyTransfer>(transferEntity))
                 .ToListAsync(cancellationToken);
+            return _mapper.Map<List<MoneyTransferEntity>, List<MoneyTransfer>>(transfers);
+        }
+
+        public async Task<List<MoneyTransfer>> GetAllTransfersAsync(string bankAccountId, CancellationToken cancellationToken)
+        {
+            var transfers = await _context.AmountTransfers
+                .AsNoTracking()
+                .Where(transfer => transfer.FromBankAccountId == bankAccountId || transfer.ToBankAccountId == bankAccountId)
+                .ToListAsync(cancellationToken);
+            return _mapper.Map<List<MoneyTransferEntity>, List<MoneyTransfer>>(transfers);
         }
 
         public async Task<string> CreateTransferAsync(decimal amount, string fromAccountId, string toAccountId, Currency currency, CancellationToken cancellationToken)

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using FluentValidation;
+using Microsoft.Extensions.Logging;
 using Minibank.Core.Domains.Accounts.Repositories;
 using Minibank.Core.Domains.Dal;
 using Minibank.Core.Domains.Users;
@@ -28,13 +29,13 @@ namespace Minibank.Core.Tests.Domains.Users.Services
             _userRepositoryMock = new Mock<IUserRepository>();
             _bankAccountRepositoryMock = new Mock<IBankAccountRepository>();
             _unitOfWorkMock = new Mock<IUnitOfWork>();
+            var loggerMock = new Mock<ILogger<UserService>>();
             var idValidator = new IdEntityValidator();
             var createUserValidator = new CreateUserValidator();
             var updateUserValidator = new UpdateUserValidator(_userRepositoryMock.Object);
             
             _userService = new UserService(_userRepositoryMock.Object, _bankAccountRepositoryMock.Object, _unitOfWorkMock.Object, idValidator,
-                createUserValidator, updateUserValidator);
-
+                createUserValidator, updateUserValidator, loggerMock.Object);
         }
 
         [Fact]
@@ -217,7 +218,7 @@ namespace Minibank.Core.Tests.Domains.Users.Services
             var user = new User() { Id = "SomeId", Login = "SomeLogin" };
             _userRepositoryMock.SetupExist(user.Id).Returns(true);
             
-            var actual = await _userService.UpdateUserAsync(user, CancellationToken.None);
+            await _userService.UpdateUserAsync(user, CancellationToken.None);
 
             _userRepositoryMock.Verify(_ => _.UpdateUserAsync(It.IsAny<User>(), It.IsAny<CancellationToken>()),
                 Times.Once);
@@ -229,7 +230,7 @@ namespace Minibank.Core.Tests.Domains.Users.Services
             var user = new User() { Id = "SomeId", Login = "SomeLogin" };
             _userRepositoryMock.SetupExist(user.Id).Returns(true);
             
-            var actual = await _userService.UpdateUserAsync(user, CancellationToken.None);
+            await _userService.UpdateUserAsync(user, CancellationToken.None);
 
             _userRepositoryMock.Verify(
                 _ => _.UpdateUserAsync(It.Is(user, new UserWithoutIdEqualityComparer()), It.IsAny<CancellationToken>()));

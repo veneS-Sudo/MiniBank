@@ -1,5 +1,4 @@
-﻿using System;
-using Minibank.Core.Converters;
+﻿using Minibank.Core.Converters;
 
 namespace Minibank.Web.Controllers.Accounts.Dto
 {

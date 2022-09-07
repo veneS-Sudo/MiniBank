@@ -1,6 +1,4 @@
-﻿using Minibank.Core.Converters;
-
-namespace Minibank.Web.Controllers.Accounts.Dto
+﻿namespace Minibank.Web.Controllers.Accounts.Dto
 {
     public class UpdateAccountDto
     {

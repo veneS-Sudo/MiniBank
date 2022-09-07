@@ -2,8 +2,8 @@
 {
     public enum Currency
     {
-        USD = 840,              // United States Dollar
-        EUR = 978,             // Euro
-        RUB = 643               // Ruble
+        Usd = 840,              // United States Dollar
+        Eur = 978,              // Euro
+        Rub = 643               // Ruble
     }
 }

@@ -18,10 +18,10 @@ namespace Minibank.Core.Tests.Converters
         }
 
         [Theory]
-        [InlineData(Currency.RUB, Currency.EUR)]
-        [InlineData(Currency.EUR, Currency.RUB)]
-        [InlineData(Currency.USD, Currency.EUR)]
-        [InlineData(Currency.USD, Currency.RUB)]
+        [InlineData(Currency.Rub, Currency.Eur)]
+        [InlineData(Currency.Eur, Currency.Rub)]
+        [InlineData(Currency.Usd, Currency.Eur)]
+        [InlineData(Currency.Usd, Currency.Rub)]
         public async void ConvertAsync_ConvertAmountFromOneToAnotherCurrency_ShouldReturnResultConversion(Currency from, Currency to)
         {
             var amount = Decimal.One;
@@ -36,9 +36,9 @@ namespace Minibank.Core.Tests.Converters
         }
 
         [Theory]
-        [InlineData(Currency.RUB, Currency.RUB)]
-        [InlineData(Currency.EUR, Currency.EUR)]
-        [InlineData(Currency.USD, Currency.USD)]
+        [InlineData(Currency.Rub, Currency.Rub)]
+        [InlineData(Currency.Eur, Currency.Eur)]
+        [InlineData(Currency.Usd, Currency.Usd)]
         public async void ConvertAsync_ConvertAmountFromOneToSameCurrency_ShouldReturnSameAmount(Currency from, Currency to)
         {
             var amount = Decimal.One;
@@ -52,8 +52,8 @@ namespace Minibank.Core.Tests.Converters
         public async void ConvertAsync_ConvertAmountEqualZero_ShouldReturnZeroAsResult()
         {
             var amount = Decimal.Zero;
-            var from = Currency.RUB;
-            var to = Currency.USD;
+            var from = Currency.Rub;
+            var to = Currency.Usd;
             
             var resultConversion = await _currencyConverter.ConvertAsync(amount, from, to, CancellationToken.None);
             
@@ -64,8 +64,8 @@ namespace Minibank.Core.Tests.Converters
         public async void ConvertAsync_ConvertNegativeAmount_ThrowNegativeAmountException()
         {
             var amount = Decimal.MinusOne;
-            var from = Currency.RUB;
-            var to = Currency.USD;
+            var from = Currency.Rub;
+            var to = Currency.Usd;
 
             await Assert.ThrowsAsync<NegativeAmountConvertException>(
                 () => _currencyConverter.ConvertAsync(amount, from, to, CancellationToken.None));
@@ -75,8 +75,8 @@ namespace Minibank.Core.Tests.Converters
         public async void ConvertAsync_ConvertAmount_MethodGetCurrencyRateOfRateProviderShouldInvokeTwice()
         {
             var amount = Decimal.One;
-            var from = Currency.RUB;
-            var to = Currency.USD;
+            var from = Currency.Rub;
+            var to = Currency.Usd;
             var currencies = new[] { from, to };
             _currencyRateProviderMock.Setup(
                 _ => _.GetCurrencyRateAsync(It.IsIn(currencies), It.IsAny<CancellationToken>()).Result).Returns(
@@ -92,8 +92,8 @@ namespace Minibank.Core.Tests.Converters
         public async void ConvertAsync_ConvertAmountEqualZero_MethodGetCurrencyRateOfRateProviderShouldNeverInvoke()
         {
             var amount = Decimal.Zero;
-            var from = Currency.RUB;
-            var to = Currency.USD;
+            var from = Currency.Rub;
+            var to = Currency.Usd;
 
             await _currencyConverter.ConvertAsync(amount, from, to, CancellationToken.None);
 

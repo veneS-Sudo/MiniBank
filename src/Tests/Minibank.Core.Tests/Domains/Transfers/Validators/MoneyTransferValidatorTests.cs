@@ -32,7 +32,7 @@ namespace Minibank.Core.Tests.Domains.Transfers.Validators
             var transfer = new MoneyTransfer()
             {
                 Amount = 10,
-                Currency = Currency.RUB,
+                Currency = Currency.Rub,
                 FromBankAccountId = senderBankAccountId,
                 ToBankAccountId = recipientBankAccountId
             };
